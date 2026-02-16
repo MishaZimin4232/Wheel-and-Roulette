@@ -1,7 +1,5 @@
-using UnityEngine;
-
 public interface Cell
 {
-    void Action();
-    
+    void Action(IGameMember player, IGameMember enemy, Board board);
+
 }

@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.SocialPlatforms.Impl;
 
 public class Player : MonoBehaviour, IGameMember
 {
@@ -7,33 +6,34 @@ public class Player : MonoBehaviour, IGameMember
     public char charinput;
     public int score = 0;
     private bool[] BulletCells = new bool[6];
-    private int current_Bcell=0;
-    
-    
+    private int current_Bcell = 0;
+
+    public void Die()
+    { }
     public void AddScore(int _score)
     {
         this.score += _score;
     }
 
-   
+
     public void AddBullet(int count)
     {
         int current_count = 0;
-        for (int i = 0; i < BulletCells.Length && current_count < count ; i++)
+        for (int i = 0; i < BulletCells.Length && current_count < count; i++)
         {
-                if (BulletCells[i] == false)
-                {
-                    BulletCells[i] = true;
-                    current_count++;
-                }
-            
+            if (BulletCells[i] == false)
+            {
+                BulletCells[i] = true;
+                current_count++;
+            }
+
         }
         for (int i = 0; i < BulletCells.Length; i++)
         {
             Debug.Log(BulletCells[i]);
         }
     }
-    
+
 
     public bool ShootYourself()
     {
@@ -60,13 +60,13 @@ public class Player : MonoBehaviour, IGameMember
             return false;
         }
 
-        
+
     }
     public void Round()
     {
         current_Bcell = Random.Range(0, 6);
     }
-    
+
     public void TakeOut()
     {
         for (int i = 0; i < BulletCells.Length; i++)
@@ -78,7 +78,7 @@ public class Player : MonoBehaviour, IGameMember
 
             }
         }
-        
+
     }
 
     public char CharInput()

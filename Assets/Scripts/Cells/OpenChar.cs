@@ -1,16 +1,10 @@
 using UnityEngine;
 
-public class NewMonoBehaviourScript : MonoBehaviour
+public class OpenChar : MonoBehaviour, Cell
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void Action(IGameMember executor, IGameMember opponent, Board board)
     {
-        
-    }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
+        Narrator.Instance.Talk("Открывается случайная буква!");
     }
 }

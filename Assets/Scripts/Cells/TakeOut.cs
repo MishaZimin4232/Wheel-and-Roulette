@@ -1,12 +1,20 @@
 using UnityEngine;
 
-public class TakeOut : MonoBehaviour,Cell
+public class TakeOut : MonoBehaviour, Cell
 {
-    [SerializeField]private Game gameref;
+    [SerializeField] private Game gameref;
 
-    public void Action()
+    public void Action(IGameMember executor, IGameMember opponent, Board board)
     {
-        gameref.current_player.TakeOut();
+        if (executor.CurrentBullets > 0)
+        {
+            executor.TakeOut();
+            Narrator.Instance.Talk("Lucky kid!");
+        }
+        else
+        {
+            Narrator.Instance.Talk("Narrator laughting: you don't have bullets, asshole!");
+        }
     }
-    
+
 }
