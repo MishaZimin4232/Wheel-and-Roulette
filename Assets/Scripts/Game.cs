@@ -17,7 +17,7 @@ public class Game : MonoBehaviour
     
     // Флаг для отслеживания, выбрана ли уже клетка
     private bool isCellSelected = false;
-    private Cell pendingCell; // клетка, которая выбрана, но ещё не активирована
+    private Cell pendingCell; 
     
     void Start()
     {
@@ -38,7 +38,7 @@ public class Game : MonoBehaviour
         
         Narrator.Instance.Talk("Welcome to the Wheel and Roulette!");
         Narrator.Instance.Task(question);
-        player.AddBullet(2);
+       
         // Подписываемся на событие приземления клетки
         wheel.OnCellLanded += OnCellLanded;
         

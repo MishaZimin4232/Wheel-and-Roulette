@@ -5,7 +5,7 @@ using System;
 
 public class Wheel : MonoBehaviour
 {
-    [SerializeField] private List<Cell> cells = new List<Cell>();
+    [SerializeField] private List<Cell> cells ;
     [SerializeField] private Pointer pointer;
     
     [Header("Wheel Rotation Settings")]
@@ -13,36 +13,27 @@ public class Wheel : MonoBehaviour
     [SerializeField] private Ease rotationEase = Ease.OutCubic;
     [SerializeField] private int fullRotations = 2;
     
-    // Событие: передаём клетку, которая БЫЛА ВЫБРАНА и теперь остановилась
+
     public event Action<Cell> OnCellLanded;
     
     private bool isSpinning = false;
     private Tween rotationTween;
     
-    // Клетка, которая БЫЛА ВЫБРАНА до вращения
+
     private Cell selectedCell;
     
     private void Awake()
     {
         if (pointer == null)
             pointer = FindObjectOfType<Pointer>();
-            
-        ValidateCells();
+        Cell[] foundCells = FindObjectsByType<Cell>(FindObjectsSortMode.None);
+        cells = new List<Cell>(foundCells);   
+       
     }
     
-    private void ValidateCells()
-    {
-        if (cells == null || cells.Count == 0)
-        {
-            cells = new List<Cell>();
-            cells.AddRange(GetComponentsInChildren<Cell>());
-            Debug.Log($"Найдено клеток: {cells.Count}");
-        }
-    }
     
-    /// <summary>
-    /// ВЫБИРАЕТ случайную клетку и начинает вращение к ней
-    /// </summary>
+    
+
     public void SpinToRandomCell()
     {
         if (isSpinning)
@@ -51,16 +42,14 @@ public class Wheel : MonoBehaviour
             return;
         }
         
-        // 1. ВЫБИРАЕМ случайную клетку (ДО вращения)
+       
         SelectRandomCell();
         
-        // 2. Запускаем вращение к выбранной клетке
+      
         StartSpinAnimation();
     }
     
-    /// <summary>
-    /// ВЫБИРАЕТ конкретную клетку и вращается к ней
-    /// </summary>
+
     public void SpinToCell(Cell targetCell)
     {
         if (isSpinning)
@@ -75,16 +64,14 @@ public class Wheel : MonoBehaviour
             return;
         }
         
-        // 1. ВЫБИРАЕМ конкретную клетку
+      
         selectedCell = targetCell;
         
-        // 2. Запускаем вращение
+  
         StartSpinAnimation();
     }
     
-    /// <summary>
-    /// Выбрать случайную клетку (ДО вращения)
-    /// </summary>
+  
     private void SelectRandomCell()
     {
         if (cells == null || cells.Count == 0)
@@ -97,9 +84,7 @@ public class Wheel : MonoBehaviour
        
     }
     
-    /// <summary>
-    /// Запустить анимацию вращения к выбранной клетке
-    /// </summary>
+
     private void StartSpinAnimation()
     {
         if (selectedCell == null)
@@ -110,14 +95,14 @@ public class Wheel : MonoBehaviour
         
         isSpinning = true;
         
-        // Вычисляем угол до выбранной клетки
+        
         float targetAngle = CalculateAngleToSelectedCell();
         float currentAngle = transform.eulerAngles.y;
         float finalAngle = currentAngle + (360f * fullRotations) + targetAngle;
         
         
         
-        // Запускаем анимацию
+       
         rotationTween = transform.DORotate(
             new Vector3(transform.eulerAngles.x, finalAngle, transform.eulerAngles.z),
             rotationDuration,
@@ -127,9 +112,7 @@ public class Wheel : MonoBehaviour
         .OnComplete(OnSpinComplete);
     }
     
-    /// <summary>
-    /// Вычислить угол до выбранной клетки
-    /// </summary>
+    
     private float CalculateAngleToSelectedCell()
     {
         int targetIndex = cells.IndexOf(selectedCell);
@@ -142,9 +125,7 @@ public class Wheel : MonoBehaviour
         return (cellCenterAngle - pointerAngle + 360f) % 360f;
     }
     
-    /// <summary>
-    /// Вызывается когда вращение завершено
-    /// </summary>
+    
     private void OnSpinComplete()
     {
         isSpinning = false;
@@ -159,9 +140,7 @@ public class Wheel : MonoBehaviour
         OnCellLanded?.Invoke(selectedCell);
     }
     
-    /// <summary>
-    /// Получить текущую выбранную клетку (без вращения)
-    /// </summary>
+    
     public Cell GetSelectedCell()
     {
         return selectedCell;

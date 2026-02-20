@@ -258,10 +258,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 1000
-      objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
       value: WheelCell (24)
@@ -329,10 +325,6 @@ PrefabInstance:
     - target: {fileID: 359328855309950460, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 750
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -497,10 +489,6 @@ PrefabInstance:
     - target: {fileID: 359328855309950460, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -1712,9 +1700,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 358497790}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0029986b381d0a942b40cf790563d0ce, type: 3}
+  m_Script: {fileID: 11500000, guid: fe36ed445bf520e47b198fcae5841896, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShootSelf
+  m_EditorClassIdentifier: Assembly-CSharp::ShootEnemy
 --- !u!1 &399334660 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
@@ -1915,10 +1903,6 @@ PrefabInstance:
     - target: {fileID: 359328855309950460, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: "Enemy\n Self"
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -2177,7 +2161,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_text
-      value: 750
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -2211,7 +2195,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 375e6bddc8065764a982cdfc8acebf4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreCell
-  Score: 750
+  Score: 500
 --- !u!1 &532171034 stripped
 GameObject:
   m_CorrespondingSourceObject: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
@@ -2355,10 +2339,6 @@ PrefabInstance:
     - target: {fileID: 359328855309950460, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 750
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -2572,12 +2552,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 'Open
-
-        letter'
-      objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
       value: WheelCell (31)
@@ -2757,10 +2731,6 @@ PrefabInstance:
     - target: {fileID: 359328855309950460, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 750
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -3680,12 +3650,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: '-1
-
-        bullet'
-      objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
       value: WheelCell (28)
@@ -3758,10 +3722,6 @@ PrefabInstance:
     - target: {fileID: 359328855309950460, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -4181,12 +4141,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 'Shoot
-
-        enemy'
-      objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
       value: WheelCell (34)
@@ -4216,9 +4170,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 47543447}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe36ed445bf520e47b198fcae5841896, type: 3}
+  m_Script: {fileID: 11500000, guid: 0029986b381d0a942b40cf790563d0ce, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ShootEnemy
+  m_EditorClassIdentifier: Assembly-CSharp::ShootSelf
 --- !u!1001 &1307333554
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -4269,7 +4223,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_text
-      value: Prize
+      value: PRIZE
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -4368,7 +4322,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 375e6bddc8065764a982cdfc8acebf4e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ScoreCell
-  Score: 1000
+  Score: 750
 --- !u!1 &1361288895
 GameObject:
   m_ObjectHideFlags: 0
@@ -5058,10 +5012,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 750
-      objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
       value: WheelCell (19)
@@ -5142,10 +5092,6 @@ PrefabInstance:
     - target: {fileID: 359328855309950460, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 1000
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -5246,12 +5192,6 @@ PrefabInstance:
     - target: {fileID: 359328855309950460, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: '-1
-
-        bullet'
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -6079,10 +6019,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
       objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 750
-      objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
       value: WheelCell (20)
@@ -6249,9 +6185,10 @@ MonoBehaviour:
   m_GameObject: {fileID: 1930961870}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ad868997f85d1a249a8eff24d65c19b1, type: 3}
+  m_Script: {fileID: 11500000, guid: 375e6bddc8065764a982cdfc8acebf4e, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TakeOut
+  m_EditorClassIdentifier: Assembly-CSharp::ScoreCell
+  Score: 1000
 --- !u!4 &1941766194 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 7767272864631817231, guid: fcab6a04c2b0e1840b41f14bd5d5197d, type: 3}
@@ -6586,9 +6523,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 2101852734}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 325ceffa15c82e444bf334479a7b2f88, type: 3}
+  m_Script: {fileID: 11500000, guid: 0029986b381d0a942b40cf790563d0ce, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::EnemySelf
+  m_EditorClassIdentifier: Assembly-CSharp::ShootSelf
 --- !u!1001 &2108126655
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6636,12 +6573,6 @@ PrefabInstance:
     - target: {fileID: 359328855309950460, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: -90
-      objectReference: {fileID: 0}
-    - target: {fileID: 2674193600458686791, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
-      propertyPath: m_text
-      value: 'Open
-
-        letter'
       objectReference: {fileID: 0}
     - target: {fileID: 4173217905901662002, guid: e5d52d8a4ccef9c42a247583054184cd, type: 3}
       propertyPath: m_Name
@@ -6727,7 +6658,7 @@ Transform:
   m_GameObject: {fileID: 5730798011294873805}
   serializedVersion: 2
   m_LocalRotation: {x: -0.3925776, y: -0.5881181, z: 0.5881181, w: -0.3925776}
-  m_LocalPosition: {x: 1.4235, y: 14.0772, z: -13.9209}
+  m_LocalPosition: {x: 1.377, y: 14.0772, z: -13.9396}
   m_LocalScale: {x: 5.425711, y: 1.6632338, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -7003,43 +6934,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b167c991d44ccc74ea59da714229714d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Wheel
-  cells:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  cells: []
   pointer: {fileID: 0}
   rotationDuration: 3
   rotationEase: 9
