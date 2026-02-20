@@ -180,8 +180,8 @@ public class Game : MonoBehaviour
     /// </summary>
     private void HandleScoreCell(ScoreCell cell)
     {
-        // Сначала начисляем очки
-        cell.Action(current_player, target_player, board);
+        
+        
         
         if (current_player is Player)
         {
@@ -211,7 +211,7 @@ public class Game : MonoBehaviour
             // Угадал
             board.OpenChar(playerChar);
             target_player.AddBullet(1);
-            
+            pendingCell.Action(current_player,target_player, board);
             if (board.IsOpen())
             {
     
@@ -224,7 +224,7 @@ public class Game : MonoBehaviour
         {
             
             current_player.AddBullet(1);
-            status = GameStatus.Roulette;
+            
             ChangePlayer();
         }
         
@@ -272,11 +272,12 @@ public class Game : MonoBehaviour
                 status = GameStatus.Roulette;
                 ChangePlayer();
             }
+            
         }
         else
         {
             current_player.AddBullet(1);
-            status = GameStatus.Roulette;
+           
             ChangePlayer();
         }
         
@@ -292,6 +293,7 @@ public class Game : MonoBehaviour
         
         // Анимация вращения барабана
         current_player.Round();
+        Debug.Log($" {current_player} вращает барабан");
         
         // Выстрел
         if (current_player.ShootYourself())
@@ -314,7 +316,14 @@ public class Game : MonoBehaviour
         foreach (char c in answer)
         {
             if (char.ToUpper(input) == char.ToUpper(c) && !board.IsCharOpen(c))
+            {
                 return true;
+            }
+            else
+            {
+                Narrator.Instance.Talk("Эта буква уже есть!");
+                return false;
+            }
         }
         return false;
     }
@@ -360,7 +369,7 @@ public class Game : MonoBehaviour
         }
         else
         {
-            Narrator.Instance.Talk("Loser1");
+            Narrator.Instance.Talk("Loser!");
         }
         
         // Здесь можно показать экран окончания
