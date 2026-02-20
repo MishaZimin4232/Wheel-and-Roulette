@@ -1,10 +1,11 @@
 using UnityEngine;
 
-public class OpenChar : MonoBehaviour, Cell
+public class OpenChar : Cell
 {
-    public void Action(IGameMember executor, IGameMember opponent, Board board)
+    
+    public override void Action(IGameMember current_player,IGameMember target_player,Board board)
     {
-
-        Narrator.Instance.Talk("Открывается случайная буква!");
+        board.RandomOpenChar();
+        Narrator.Instance.Talk("Opened new letter!");
     }
 }

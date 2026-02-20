@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: QuestionBank
   m_EditorClassIdentifier: Assembly-CSharp::QuestionBank
   qb:
-  - answer: Car
+  - answer: PEOPLE
     question: The machine
-  - answer: Sun
+  - answer: MOTHER
     question: The most famous star
-  - answer: War
+  - answer: FRIEND
     question: People killing each other
-  - answer: Robot
+  - answer: FAMILY
     question: Its machine, that copy humans' behaivior

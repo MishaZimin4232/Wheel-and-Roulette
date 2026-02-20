@@ -1,33 +1,45 @@
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 public class Player : MonoBehaviour, IGameMember
 {
     public string wordinput;
     public char charinput;
-    public int score = 0;
-    private bool[] BulletCells = new bool[6];
-    private int current_Bcell = 0;
+    public int score { get; set; }= 0;
+    public bool IsAlive { get; set; } = true;
+    public bool[] BulletCells { get; set; } = new bool[6];
+    public int current_Bcell{ get; set; } = 0;
+
 
     public void Die()
-    { }
+    {
+        IsAlive = false;
+        Debug.Log(gameObject.name + " is dead");
+        Destroy(gameObject);
+    }
     public void AddScore(int _score)
     {
         this.score += _score;
     }
-
+    
 
     public void AddBullet(int count)
     {
         int current_count = 0;
         for (int i = 0; i < BulletCells.Length && current_count < count; i++)
         {
-            if (BulletCells[i] == false)
+            if (!BulletCells[i])
             {
                 BulletCells[i] = true;
                 current_count++;
             }
 
         }
+        if (current_count == 0)
+        {
+            Narrator.Instance.Talk("You have full pack!");
+        }
+
         for (int i = 0; i < BulletCells.Length; i++)
         {
             Debug.Log(BulletCells[i]);
@@ -37,9 +49,10 @@ public class Player : MonoBehaviour, IGameMember
 
     public bool ShootYourself()
     {
-        if (BulletCells[current_Bcell] == true)
+        if (BulletCells[current_Bcell])
         {
-            BulletCells[current_Bcell] = false;
+
+            Die();
             return true;
         }
         else
@@ -48,7 +61,7 @@ public class Player : MonoBehaviour, IGameMember
         }
     }
 
-    public bool ShootEnemy()
+    public bool ShootEnemy(IGameMember enemy)
     {
         if (BulletCells[current_Bcell] == true)
         {
@@ -83,12 +96,21 @@ public class Player : MonoBehaviour, IGameMember
 
     public char CharInput()
     {
-        return charinput;
+        //поле ввода для символа
+        char input = 'c';
+        return input;
     }
 
     public string WordInput()
     {
+        //поле ввода для строки
+        wordinput = "family";
         return wordinput;
+    }
+
+    public void PlayerInput()
+    {
+        //вызывает меню выбора - символ или слово
     }
 
     public bool EnemyShoot(IGameMember choosen_enemy)

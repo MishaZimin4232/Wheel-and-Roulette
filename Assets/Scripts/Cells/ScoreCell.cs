@@ -1,12 +1,12 @@
 using UnityEngine;
 
-public class ScoreCell : MonoBehaviour, Cell
+public class ScoreCell :  Cell
 {
     [SerializeField] private int Score;
-    public Game gameref;
-    public void Action(IGameMember player, IGameMember enemy, Board board)
+    
+    public override void Action(IGameMember current_player,IGameMember target_player,Board board)
     {
-        gameref.current_player.AddScore(Score);
+        current_player.AddScore(Score);
         Narrator.Instance.Talk($"Player take {Score} scores!");
     }
 

@@ -1,10 +1,10 @@
 using UnityEngine;
 
-public class ShootEnemy : MonoBehaviour,Cell
+public class ShootEnemy : Cell
 {
-   [SerializeField] private Game gameref;
-   public void Action()
+   
+   public override void Action(IGameMember current_player,IGameMember target_player,Board board)
    {
-      gameref.current_player.ShootEnemy();
+      current_player.ShootEnemy(target_player);
    }
 }

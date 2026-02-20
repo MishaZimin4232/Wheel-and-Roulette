@@ -1,16 +1,16 @@
 using UnityEngine;
 
-public class ShootSelf : MonoBehaviour, Cell
+public class ShootSelf :  Cell
 {
-    [SerializeField] private Game gameref;
-
-    public void Action(IGameMember player, IGameMember opponent, Board board)
+    
+    
+    public override void Action(IGameMember current_player,IGameMember target_player,Board board)
     {
         Narrator.Instance.Talk("SHOOT!");
-        if (player.ShootYourself())
+        if (current_player.ShootYourself())
         {
             Narrator.Instance.Talk("First blood!");
-            player.Die();
+           
         }
         else
         {

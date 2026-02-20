@@ -2,55 +2,68 @@ using UnityEngine;
 
 public class Bot : MonoBehaviour,IGameMember
 {
-    public bool[] BulletCells = new bool[6];
-    private int current_Bcell=0;
-    public int count;
-    public int score = 0;
-    public char charinput;
+    public bool[] BulletCells { get; set; } = new bool[6];
+    public int current_Bcell { get; set; }
+    public int score { get; set; }
+    private char charinput;
+    public bool IsAlive { get; set; }=true;
+    private string ans;
+
     public void AddScore(int _score)
     {
         this.score += _score;
     }
-    
+
+    public void Die()
+    {
+        IsAlive = false;
+        Debug.Log(gameObject.name + " is dead");
+        Destroy(gameObject);
+    }
+
+    public void GetAnswer(string answer)
+    {
+        ans = answer;
+    }
+
     public void AddBullet(int count)
     {
         int current_count = 0;
-        for (int i = 0; i < BulletCells.Length; i++)
+        for (int i = 0; i < BulletCells.Length && current_count < count; i++)
         {
-            if (current_count < count)
+            if (!BulletCells[i])
             {
-                if (BulletCells[i] == false)
-                {
-                    BulletCells[i] = true;
-                    current_count++;
-                }
-            }
-            else
-            {
-                break;
+                BulletCells[i] = true;
+                current_count++;
             }
         }
 
+        if (current_count == 0)
+        {
+            Narrator.Instance.Talk("У вас полный бак!");
+        }
     }
 
     public bool ShootYourself()
     {
-        if (BulletCells[current_Bcell] == true)
+        if (BulletCells[current_Bcell])
         {
-            BulletCells[current_Bcell] = false;
+            Die();
             return true;
         }
         else
         {
+            
             return false;
         }
     }
 
-    public bool ShootEnemy()
+    public bool ShootEnemy(IGameMember enemy)
     {
         if (BulletCells[current_Bcell] == true)
         {
             BulletCells[current_Bcell] = false;
+            enemy.Die();
             return true;
         }
         else
@@ -75,11 +88,12 @@ public class Bot : MonoBehaviour,IGameMember
             }
         }
     }
+
     public char CharInput()
     {
-        return charinput;
+        char var1 = ans[Random.Range(0, ans.Length)];
+        char var2 = (char)Random.Range(97, 123);;
+        char input=Random.Range(0,100)<=80?var2:var1;
+        return input;
     }
-
-    
-    
 }
