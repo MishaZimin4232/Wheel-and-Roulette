@@ -6,7 +6,7 @@ public class ShootSelf :  Cell
     
     public override void Action(IGameMember current_player,IGameMember target_player,Board board)
     {
-        Narrator.Instance.Talk("SHOOT!");
+        Narrator.Instance.Talk("Выпала ShootSelf");
         if (current_player.ShootYourself())
         {
             Narrator.Instance.Talk("First blood!");

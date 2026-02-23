@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -9,7 +10,12 @@ public class Player : MonoBehaviour, IGameMember
     public bool IsAlive { get; set; } = true;
     public bool[] BulletCells { get; set; } = new bool[6];
     public int current_Bcell{ get; set; } = 0;
+    public TextMeshProUGUI score_text;
 
+    void Start()
+    {
+        score_text.text = "Score - "+this.score.ToString();
+    }
 
     public void Die()
     {
@@ -20,6 +26,7 @@ public class Player : MonoBehaviour, IGameMember
     public void AddScore(int _score)
     {
         this.score += _score;
+        score_text.text = "Score - "+this.score.ToString();
     }
     
 
@@ -40,10 +47,7 @@ public class Player : MonoBehaviour, IGameMember
             Narrator.Instance.Talk("You have full pack!");
         }
 
-        for (int i = 0; i < BulletCells.Length; i++)
-        {
-            Debug.Log(BulletCells[i]);
-        }
+        
     }
 
 
@@ -113,17 +117,6 @@ public class Player : MonoBehaviour, IGameMember
         //вызывает меню выбора - символ или слово
     }
 
-    public bool EnemyShoot(IGameMember choosen_enemy)
-    {
-        if (BulletCells[current_Bcell] == true)
-        {
-            BulletCells[current_Bcell] = false;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
+  
 
 }

@@ -40,7 +40,7 @@ public class Bot : MonoBehaviour,IGameMember
 
         if (current_count == 0)
         {
-            Narrator.Instance.Talk("У вас полный бак!");
+            Narrator.Instance.Talk("You have full pack!");
         }
     }
 
