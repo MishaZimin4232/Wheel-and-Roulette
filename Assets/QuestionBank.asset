@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::QuestionBank
   qb:
   - answer: PEOPLE
-    question: The machine
+    question: HOMO SAPIENS
   - answer: MOTHER
     question: The most famous star
   - answer: FRIEND
-    question: People killing each other
+    question: Your bestie
   - answer: FAMILY
     question: Its machine, that copy humans' behaivior

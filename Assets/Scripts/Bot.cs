@@ -8,7 +8,7 @@ public class Bot : MonoBehaviour,IGameMember
     private char charinput;
     public bool IsAlive { get; set; }=true;
     private string ans;
-
+    public Bullet[] bullet_images=new Bullet[6];
     public void AddScore(int _score)
     {
         this.score += _score;
@@ -34,6 +34,7 @@ public class Bot : MonoBehaviour,IGameMember
             if (!BulletCells[i])
             {
                 BulletCells[i] = true;
+                bullet_images[i].ChangeSprite();
                 current_count++;
             }
         }
@@ -49,6 +50,7 @@ public class Bot : MonoBehaviour,IGameMember
         if (BulletCells[current_Bcell])
         {
             Die();
+            bullet_images[current_Bcell].ChangeSprite();
             return true;
         }
         else
@@ -63,6 +65,7 @@ public class Bot : MonoBehaviour,IGameMember
         if (BulletCells[current_Bcell] == true)
         {
             BulletCells[current_Bcell] = false;
+            bullet_images[current_Bcell].ChangeSprite();
             enemy.Die();
             return true;
         }
@@ -82,6 +85,7 @@ public class Bot : MonoBehaviour,IGameMember
         {
             if (BulletCells[i] == true)
             {
+                bullet_images[i].ChangeSprite();
                 BulletCells[i] = false;
                 break;
 

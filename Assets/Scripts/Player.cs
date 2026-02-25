@@ -1,5 +1,8 @@
+using TMPro;
 using UnityEngine;
+using System;
 using UnityEngine.InputSystem;
+using System.Collections.Generic;
 
 public class Player : MonoBehaviour, IGameMember
 {
@@ -9,7 +12,25 @@ public class Player : MonoBehaviour, IGameMember
     public bool IsAlive { get; set; } = true;
     public bool[] BulletCells { get; set; } = new bool[6];
     public int current_Bcell{ get; set; } = 0;
+    public TextMeshProUGUI score_text;
+    public TextMeshProUGUI player_char;
+    public TextMeshProUGUI player_string;
 
+    public GameObject ChoisePanel;
+    public GameObject LetterPanel;
+    public GameObject WordPanel;
+    public Bullet[] bullet_images=new Bullet[6];
+    public Action OnCharChosen;      // Событие выбора буквы
+    public Action OnWordChosen; 
+    
+
+    void Start()
+    {
+        score_text.text = "Score - "+this.score.ToString();
+        ChoisePanel.SetActive(false);
+        LetterPanel.SetActive(false);
+        WordPanel.SetActive(false);
+    }
 
     public void Die()
     {
@@ -20,6 +41,7 @@ public class Player : MonoBehaviour, IGameMember
     public void AddScore(int _score)
     {
         this.score += _score;
+        score_text.text = "Score - "+this.score.ToString();
     }
     
 
@@ -31,6 +53,7 @@ public class Player : MonoBehaviour, IGameMember
             if (!BulletCells[i])
             {
                 BulletCells[i] = true;
+                bullet_images[i].ChangeSprite();
                 current_count++;
             }
 
@@ -40,10 +63,7 @@ public class Player : MonoBehaviour, IGameMember
             Narrator.Instance.Talk("You have full pack!");
         }
 
-        for (int i = 0; i < BulletCells.Length; i++)
-        {
-            Debug.Log(BulletCells[i]);
-        }
+        
     }
 
 
@@ -53,6 +73,7 @@ public class Player : MonoBehaviour, IGameMember
         {
 
             Die();
+            bullet_images[current_Bcell].ChangeSprite();
             return true;
         }
         else
@@ -66,6 +87,8 @@ public class Player : MonoBehaviour, IGameMember
         if (BulletCells[current_Bcell] == true)
         {
             BulletCells[current_Bcell] = false;
+            bullet_images[current_Bcell].ChangeSprite();
+            enemy.Die();
             return true;
         }
         else
@@ -77,7 +100,7 @@ public class Player : MonoBehaviour, IGameMember
     }
     public void Round()
     {
-        current_Bcell = Random.Range(0, 6);
+        current_Bcell = UnityEngine.Random.Range(0, 6);
     }
 
     public void TakeOut()
@@ -87,6 +110,7 @@ public class Player : MonoBehaviour, IGameMember
             if (BulletCells[i] == true)
             {
                 BulletCells[i] = false;
+                bullet_images[i].ChangeSprite();
                 break;
 
             }
@@ -94,36 +118,66 @@ public class Player : MonoBehaviour, IGameMember
 
     }
 
+    public void CharGet()
+    {
+        Time.timeScale = 1f;
+        charinput = player_char.text[0];
+        OnCharChosen?.Invoke();
+        LetterPanel.SetActive(false);
+    }
+
+    public void WordGet()
+    {
+        Time.timeScale = 1f;
+        wordinput = player_string.text;
+        OnWordChosen?.Invoke();
+        WordPanel.SetActive(false);
+    }
+
     public char CharInput()
     {
-        //поле ввода для символа
-        char input = 'c';
-        return input;
+        return charinput;
     }
 
     public string WordInput()
     {
-        //поле ввода для строки
-        wordinput = "family";
         return wordinput;
     }
-
+    private void ClearInputFields()
+    {
+        if (player_char != null)
+            player_char.text = "";
+            
+        if (player_string != null)
+            player_string.text = "";
+    }
     public void PlayerInput()
     {
-        //вызывает меню выбора - символ или слово
+        ClearInputFields();
+        ChoisePanel.SetActive(true);
+        Time.timeScale = 0f;
     }
 
-    public bool EnemyShoot(IGameMember choosen_enemy)
+    public void ShowCharInput()
     {
-        if (BulletCells[current_Bcell] == true)
-        {
-            BulletCells[current_Bcell] = false;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        
+        ChoisePanel.SetActive(false);
+        LetterPanel.SetActive(true);
+        Time.timeScale = 0f;
     }
+    public void ShowWordInput()
+    {
+        ChoisePanel.SetActive(false);
+        WordPanel.SetActive(true);
+        Time.timeScale = 0f;
+    }
+    private void OnDestroy()
+    {
+        // Очищаем все подписки при уничтожении игрока
+        OnCharChosen = null;
+        OnWordChosen = null;
+        
+    }
+
 
 }

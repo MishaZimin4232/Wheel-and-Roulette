@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 
 public class Game : MonoBehaviour
@@ -14,10 +15,12 @@ public class Game : MonoBehaviour
     public IGameMember current_player;
     public IGameMember target_player;
     private GameStatus status;
+    public TextMeshProUGUI Turn;
     
-    // Флаг для отслеживания, выбрана ли уже клетка
     private bool isCellSelected = false;
-    private Cell pendingCell; 
+    private Cell pendingCell;
+    private bool waitingForPlayerInput = false; 
+    
     
     void Start()
     {
@@ -25,7 +28,7 @@ public class Game : MonoBehaviour
         wheel = FindObjectOfType<Wheel>();
         player = FindObjectOfType<Player>();
         bot = FindObjectOfType<Bot>();
-        
+        Turn.text ="Player turn";  
         current_player = player;
         target_player = bot;
         
@@ -34,27 +37,56 @@ public class Game : MonoBehaviour
         question = bank.qb[question_number].question;
         
         board.SetWord(answer);
+        board.EnterQuestion(question);
+        bot.GetAnswer(answer);
         status = GameStatus.Wheel;
-        
         Narrator.Instance.Talk("Welcome to the Wheel and Roulette!");
         Narrator.Instance.Task(question);
-       
-        // Подписываемся на событие приземления клетки
         wheel.OnCellLanded += OnCellLanded;
-        
-        // Запускаем игру
+        SubscribeToPlayerEvents();
         ProcessGameState();
     }
+    private void SubscribeToPlayerEvents()
+    {
+        
+        UnsubscribeFromPlayerEvents();
+        
+        
+        player.OnCharChosen += OnPlayerCharChosen;
+        player.OnWordChosen += OnPlayerWordChosen;
+    }
     
+    private void UnsubscribeFromPlayerEvents()
+    {
+        if (player != null)
+        {
+            player.OnCharChosen -= OnPlayerCharChosen;
+            player.OnWordChosen -= OnPlayerWordChosen;
+        }
+    }
+
+    private void OnPlayerCharChosen()
+    {
+        if (waitingForPlayerInput)
+        {
+            waitingForPlayerInput = false;
+            ProcessCharInput();
+        }
+    }
+    private void OnPlayerWordChosen()
+    {
+        if (waitingForPlayerInput)
+        {
+            waitingForPlayerInput = false;
+            ProcessWordInput();
+        }
+    }
     private void OnDestroy()
     {
         if (wheel != null)
             wheel.OnCellLanded -= OnCellLanded;
     }
-    
-    /// <summary>
-    /// Основной метод состояния игры
-    /// </summary>
+
     private void ProcessGameState()
     {
         if (!player.IsAlive || !bot.IsAlive)
@@ -74,46 +106,33 @@ public class Game : MonoBehaviour
                 break;
         }
     }
-    
-    /// <summary>
-    /// Состояние колеса
-    /// </summary>
+
     private void ProcessWheelState()
     {
         Debug.Log($"🎡 Состояние: WHEEL, игрок: {current_player}");
         
         if (!isCellSelected)
         {
-            // 1. ВЫБИРАЕМ клетку (ДО вращения)
             SelectCellForCurrentPlayer();
         }
         else
         {
-            // 2. Клетка уже выбрана, ждём вращение
             Debug.Log("Клетка выбрана, ожидание вращения...");
         }
     }
     
-    /// <summary>
-    /// Выбрать клетку для текущего игрока
-    /// </summary>
     private void SelectCellForCurrentPlayer()
     {
-        // Здесь можно добавить логику выбора клетки:
-        // - Для игрока - через UI
-        // - Для бота - случайно
         
         if (current_player is Player)
         {
-            // Игрок - можно показать UI для выбора клетки
-            // Но по ТЗ клетка выбирается случайно вращением
-            // Поэтому просто запускаем случайное вращение
             Debug.Log("Игрок вращает колесо...");
-            wheel.SpinToRandomCell();
+            Narrator.Instance.Talk("Spin the wheel");
+            wheel.CanSpin=true;
         }
         else
         {
-            // Бот - выбираем случайную клетку
+         
             Debug.Log("Бот вращает колесо...");
             wheel.SpinToRandomCell();
         }
@@ -121,24 +140,16 @@ public class Game : MonoBehaviour
         isCellSelected = true;
     }
     
-    /// <summary>
-    /// Вызывается, когда колесо завершило вращение и клетка приземлилась
-    /// </summary>
+    
     private void OnCellLanded(Cell landedCell)
     {
-       
-        
-        // Сохраняем клетку для активации
+   
         pendingCell = landedCell;
         isCellSelected = false;
-        
-        // Активируем клетку
         ActivatePendingCell();
     }
     
-    /// <summary>
-    /// Активировать выбранную клетку
-    /// </summary>
+   
     private void ActivatePendingCell()
     {
         if (pendingCell == null)
@@ -148,81 +159,70 @@ public class Game : MonoBehaviour
             return;
         }
         
-        
-        
-        // Проверяем тип клетки
         if (pendingCell is ScoreCell scoreCell)
         {
-            // ScoreCell требует выбора буквы/слова
+           
             HandleScoreCell(scoreCell);
         }
         else
         {
-            // Обычная клетка - сразу выполняем действие
+        
             pendingCell.Action(current_player, target_player, board);
             
-            // Проверяем, не умер ли кто
             if (!player.IsAlive || !bot.IsAlive)
             {
                 EndGame(player.IsAlive);
                 return;
             }
             
-            // Продолжаем игру
             ProcessGameState();
         }
         
         pendingCell = null;
     }
     
-    /// <summary>
-    /// Обработка ScoreCell
-    /// </summary>
     private void HandleScoreCell(ScoreCell cell)
     {
-        
-        
-        
         if (current_player is Player)
         {
-            // Игрок выбирает букву или слово
-            // Показываем UI выбора
+           
             ShowPlayerInputChoice();
         }
         else
         {
-            // Бот автоматически выбирает букву
-            ProcessBotCharInput();
+            
+            ProcessCharInput();
         }
     }
     
     private void ShowPlayerInputChoice()
     {
-        
-        ProcessPlayerCharInput();
+        player.PlayerInput();
+        waitingForPlayerInput = true;
     }
     
-    private void ProcessPlayerCharInput()
+    private void ProcessCharInput()
     {
-        char playerChar = player.CharInput();
         
-        if (CheckCharInput(playerChar))
+        char input = current_player.CharInput();
+        Debug.Log(input);
+        if (CheckCharInput(input))
         {
-            // Угадал
-            board.OpenChar(playerChar);
+            Narrator.Instance.Talk("Правильная буква");
+            board.OpenChar(input);
             target_player.AddBullet(1);
             pendingCell.Action(current_player,target_player, board);
             if (board.IsOpen())
             {
     
-                
+                Narrator.Instance.Talk("Слово отгадано");
                 status = GameStatus.Roulette;
                 ChangePlayer(); 
             }
         }
         else
         {
-            
+            Narrator.Instance.Talk("Неправильная буква");
             current_player.AddBullet(1);
             
             ChangePlayer();
@@ -231,11 +231,11 @@ public class Game : MonoBehaviour
         ProcessGameState();
     }
     
-    private void ProcessPlayerWordInput()
+    private void ProcessWordInput()
     {
-        string playerWord = player.WordInput();
-        
-        if (CheckWordInput(playerWord))
+        string input = player.WordInput();
+        Debug.Log(input);
+        if (CheckWordInput(input))
         {
             board.OpenString();
             
@@ -258,48 +258,21 @@ public class Game : MonoBehaviour
         ProcessGameState();
     }
     
-    private void ProcessBotCharInput()
-    {
-        char botChar = bot.CharInput();
-        
-        if (CheckCharInput(botChar))
-        {
-            board.OpenChar(botChar);
-            target_player.AddBullet(1);
-            
-            if (board.IsOpen())
-            {
-                status = GameStatus.Roulette;
-                ChangePlayer();
-            }
-            
-        }
-        else
-        {
-            current_player.AddBullet(1);
-           
-            ChangePlayer();
-        }
-        
-        ProcessGameState();
-    }
     
-    /// <summary>
-    /// Состояние русской рулетки
-    /// </summary>
     private void ProcessRouletteState()
     {
+        Narrator.Instance.Talk("Начинается русская рулетка");
         Debug.Log($"state: ROULETTE, turn: {current_player}");
         
-        // Анимация вращения барабана
+        
         current_player.Round();
         Debug.Log($" {current_player} вращает барабан");
         
-        // Выстрел
+        
         if (current_player.ShootYourself())
         {
             Narrator.Instance.Talk($"💀 {current_player} killed!");
-            EndGame(current_player is Bot); // Если умер текущий, выиграл противник
+            EndGame(current_player is Bot); 
         }
         else
         {
@@ -311,7 +284,13 @@ public class Game : MonoBehaviour
     
     private bool CheckCharInput(char input)
     {
-        if (!char.IsLetter(input)) return false;
+        if (!char.IsLetter(input))
+        {
+            return false;
+        }
+
+       
+        
         
         foreach (char c in answer)
         {
@@ -330,8 +309,16 @@ public class Game : MonoBehaviour
     
     private bool CheckWordInput(string input)
     {
-        return !string.IsNullOrEmpty(input) && 
-               input.ToUpper().Equals(answer.ToUpper());
+        if (!string.IsNullOrEmpty(input) &&
+            input.ToUpper().Equals(answer.ToUpper()))
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+        
     }
     
     private bool IsFirstRound()
@@ -350,28 +337,29 @@ public class Game : MonoBehaviour
         { 
             current_player = bot;
             target_player = player;
+            Turn.text ="Bot turn"; 
         }
         else
         {
+            Turn.text ="Player turn"; 
             current_player = player;
             target_player = bot;
         }
         
-        Debug.Log($" Turn: {current_player}");
+        
     }
     
     private void EndGame(bool playerWon)
     {
         if (playerWon)
         {
-            int totalScore = player.score + 500;
-            Narrator.Instance.Talk($" Lucky asshole!");
+            player.AddBullet(500);
+            int totalScore = player.score;
+            Narrator.Instance.Talk($" You won {totalScore} score!");
         }
         else
         {
-            Narrator.Instance.Talk("Loser!");
+            Narrator.Instance.Talk("Wasted!");
         }
-        
-        // Здесь можно показать экран окончания
     }
 }

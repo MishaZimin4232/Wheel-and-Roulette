@@ -6,8 +6,10 @@ public class Board : MonoBehaviour
 {
     private string word;
     public Letter[] charPrefab =  new Letter[6];
+    [SerializeField]private TMP_Text question_text;
+
     
-    
+
     public void OpenChar(char ch)
     {
         for (int i=0; i < word.Length; i++)
@@ -31,10 +33,7 @@ public class Board : MonoBehaviour
             }
         return true;
     }
-
     
-
-
     private List<char> GetUnopenedLetters()
     {
         List<char> unopened = new List<char>();
@@ -93,15 +92,17 @@ public class Board : MonoBehaviour
     {
         for (int i = 0; i < word.Length; i++)
         {
-            if (char.ToUpper(ch) == char.ToUpper(word[i]))
+            if (charPrefab[i] != null && charPrefab[i].IsOpen && charPrefab[i].GetLetter()==ch.ToString().ToUpper())
             {
-                if (charPrefab[i] != null && charPrefab[i].IsOpen)
-                {
-                    return true;
-                }
-            }
+                return true;
+            }    
+            
         }
-        Narrator.Instance.Talk("Этот символ уже открыт");
         return false;
+    }
+
+    public void EnterQuestion(string question)
+    {
+        question_text.text = question;
     }
 }

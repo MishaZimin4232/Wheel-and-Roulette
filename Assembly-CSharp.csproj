@@ -58,14 +58,15 @@
     <Compile Include="Assets\Scripts\Pointer.cs" />
     <Compile Include="Assets\Scripts\Cells\OpenChar.cs" />
     <Compile Include="Assets\Scripts\Cells\ScoreCell.cs" />
+    <Compile Include="Assets\Scripts\Bullet.cs" />
     <Compile Include="Assets\TutorialInfo\Scripts\Readme.cs" />
     <Compile Include="Assets\Scripts\Cells\ShootEnemy.cs" />
     <Compile Include="Assets\Scripts\Cells\TakeOut.cs" />
     <Compile Include="Assets\Scripts\Cells\ShootSelf.cs" />
     <Compile Include="Assets\Scripts\Bot.cs" />
     <Compile Include="Assets\Scripts\WordBank\QuestionBank.cs" />
-    <Compile Include="Assets\Scripts\Rotation.cs" />
     <Compile Include="Assets\Scripts\GameStatus.cs" />
+    <Compile Include="Assets\Scripts\Cells\EnemySelf.cs" />
     <None Include="Assets\TextMesh Pro\Shaders\TMPro.cginc" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile Overlay.shader" />
     <None Include="Assets\TextMesh Pro\Shaders\TMP_SDF-Mobile-2-Pass.shader" />

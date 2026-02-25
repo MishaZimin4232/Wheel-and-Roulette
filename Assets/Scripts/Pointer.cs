@@ -44,13 +44,4 @@ public class Pointer : MonoBehaviour
             currentCell = null;
         }
     }
-
-    
-
-    public Cell GetCell()
-    {
-        return currentCell;
-    }
-    
-    
 }
