@@ -12,6 +12,7 @@ public class Board : MonoBehaviour
 
     public void OpenChar(char ch)
     {
+        ch = char.ToUpper(ch);
         for (int i=0; i < word.Length; i++)
         {
             if (ch == word[i])

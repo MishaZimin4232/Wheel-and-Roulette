@@ -19,7 +19,8 @@ public class Game : MonoBehaviour
     
     private bool isCellSelected = false;
     private Cell pendingCell;
-    private bool waitingForPlayerInput = false; 
+    private bool waitingForPlayerInput = false;
+    private bool IsFirstRound = true;
     
     
     void Start()
@@ -94,7 +95,6 @@ public class Game : MonoBehaviour
             EndGame(player.IsAlive);
             return;
         }
-        
         switch (status)
         {
             case GameStatus.Wheel:
@@ -126,13 +126,12 @@ public class Game : MonoBehaviour
         
         if (current_player is Player)
         {
-            Debug.Log("Игрок вращает колесо...");
+            
             Narrator.Instance.Talk("Spin the wheel");
             wheel.CanSpin=true;
         }
         else
         {
-         
             Debug.Log("Бот вращает колесо...");
             wheel.SpinToRandomCell();
         }
@@ -161,7 +160,7 @@ public class Game : MonoBehaviour
         
         if (pendingCell is ScoreCell scoreCell)
         {
-           
+           Debug.Log("pendingCell is ScoreCell");
             HandleScoreCell(scoreCell);
         }
         else
@@ -174,11 +173,11 @@ public class Game : MonoBehaviour
                 EndGame(player.IsAlive);
                 return;
             }
-            
+            pendingCell = null;
             ProcessGameState();
         }
         
-        pendingCell = null;
+        
     }
     
     private void HandleScoreCell(ScoreCell cell)
@@ -203,18 +202,17 @@ public class Game : MonoBehaviour
     
     private void ProcessCharInput()
     {
-        
+        IsFirstRound = false;
         char input = current_player.CharInput();
         Debug.Log(input);
         if (CheckCharInput(input))
         {
-            Narrator.Instance.Talk("Правильная буква");
+            Narrator.Instance.Talk( "Right letter");
             board.OpenChar(input);
             target_player.AddBullet(1);
             pendingCell.Action(current_player,target_player, board);
             if (board.IsOpen())
             {
-    
                 Narrator.Instance.Talk("Слово отгадано");
                 status = GameStatus.Roulette;
                 ChangePlayer(); 
@@ -222,9 +220,8 @@ public class Game : MonoBehaviour
         }
         else
         {
-            Narrator.Instance.Talk("Неправильная буква");
+            Narrator.Instance.Talk("Wrong char, 1 bullet");
             current_player.AddBullet(1);
-            
             ChangePlayer();
         }
         
@@ -234,12 +231,11 @@ public class Game : MonoBehaviour
     private void ProcessWordInput()
     {
         string input = player.WordInput();
-        Debug.Log(input);
         if (CheckWordInput(input))
         {
             board.OpenString();
-            
-            if (IsFirstRound())
+            pendingCell.Action(current_player,target_player, board);
+            if (IsFirstRound)
             {
                 Narrator.Instance.Talk("Shit! Game Over!");
                 EndGame(true);
@@ -253,6 +249,7 @@ public class Game : MonoBehaviour
         {
             current_player.AddBullet(2);
             ChangePlayer();
+            IsFirstRound = false;
         }
         
         ProcessGameState();
@@ -286,25 +283,38 @@ public class Game : MonoBehaviour
     {
         if (!char.IsLetter(input))
         {
+            Narrator.Instance.Talk("Введите букву!");
             return false;
         }
-
-       
-        
-        
+    
+        bool letterExists = false;
+        bool letterAlreadyOpen = false;
+    
         foreach (char c in answer)
         {
-            if (char.ToUpper(input) == char.ToUpper(c) && !board.IsCharOpen(c))
+            if (char.ToUpper(input) == char.ToUpper(c))
             {
-                return true;
-            }
-            else
-            {
-                Narrator.Instance.Talk("Эта буква уже есть!");
-                return false;
+                letterExists = true;
+                if (board.IsCharOpen(c))
+                {
+                    letterAlreadyOpen = true;
+                }
             }
         }
-        return false;
+    
+        if (!letterExists)
+        {
+            Narrator.Instance.Talk("Такой буквы нет в слове!");
+            return false;
+        }
+    
+        if (letterAlreadyOpen)
+        {
+            Narrator.Instance.Talk("Эта буква уже открыта!");
+            return false;
+        }
+    
+        return true;
     }
     
     private bool CheckWordInput(string input)
@@ -321,15 +331,7 @@ public class Game : MonoBehaviour
         
     }
     
-    private bool IsFirstRound()
-    {
-        for (int i = 0; i < answer.Length; i++)
-        {
-            if (board.IsCharOpen(answer[i]))
-                return false;
-        }
-        return true;
-    }
+    
     
     private void ChangePlayer()
     {
@@ -353,7 +355,8 @@ public class Game : MonoBehaviour
     {
         if (playerWon)
         {
-            player.AddBullet(500);
+            Narrator.Instance.Talk("player take 500 score for winning");
+            player.AddScore(500);
             int totalScore = player.score;
             Narrator.Instance.Talk($" You won {totalScore} score!");
         }

@@ -8,7 +8,7 @@ public class ScoreCell :  Cell
     {
         
         current_player.AddScore(Score);
-        Narrator.Instance.Talk($"Player take {Score} scores!");
+        
     }
 
 }

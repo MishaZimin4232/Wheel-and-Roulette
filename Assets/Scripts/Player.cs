@@ -20,7 +20,7 @@ public class Player : MonoBehaviour, IGameMember
     public GameObject LetterPanel;
     public GameObject WordPanel;
     public Bullet[] bullet_images=new Bullet[6];
-    public Action OnCharChosen;      // Событие выбора буквы
+    public Action OnCharChosen;      
     public Action OnWordChosen; 
     
 
@@ -62,13 +62,12 @@ public class Player : MonoBehaviour, IGameMember
         {
             Narrator.Instance.Talk("You have full pack!");
         }
-
-        
     }
 
 
     public bool ShootYourself()
     {
+        Round();
         if (BulletCells[current_Bcell])
         {
 
@@ -84,6 +83,7 @@ public class Player : MonoBehaviour, IGameMember
 
     public bool ShootEnemy(IGameMember enemy)
     {
+        Round();
         if (BulletCells[current_Bcell] == true)
         {
             BulletCells[current_Bcell] = false;
@@ -120,7 +120,7 @@ public class Player : MonoBehaviour, IGameMember
 
     public void CharGet()
     {
-        Time.timeScale = 1f;
+        
         charinput = player_char.text[0];
         OnCharChosen?.Invoke();
         LetterPanel.SetActive(false);
@@ -128,8 +128,12 @@ public class Player : MonoBehaviour, IGameMember
 
     public void WordGet()
     {
-        Time.timeScale = 1f;
-        wordinput = player_string.text;
+        // Удаляем символ 8203 (Zero Width Space)
+        wordinput = player_string.text.Replace("\u200B", "").Trim();
+    
+        Debug.Log($"Input after cleaning: '{wordinput}'");
+        Debug.Log($"Cleaned length: {wordinput.Length}");
+    
         OnWordChosen?.Invoke();
         WordPanel.SetActive(false);
     }
@@ -143,19 +147,12 @@ public class Player : MonoBehaviour, IGameMember
     {
         return wordinput;
     }
-    private void ClearInputFields()
-    {
-        if (player_char != null)
-            player_char.text = "";
-            
-        if (player_string != null)
-            player_string.text = "";
-    }
+    
     public void PlayerInput()
     {
-        ClearInputFields();
+        
         ChoisePanel.SetActive(true);
-        Time.timeScale = 0f;
+        
     }
 
     public void ShowCharInput()
@@ -163,17 +160,17 @@ public class Player : MonoBehaviour, IGameMember
         
         ChoisePanel.SetActive(false);
         LetterPanel.SetActive(true);
-        Time.timeScale = 0f;
+        
     }
     public void ShowWordInput()
     {
         ChoisePanel.SetActive(false);
         WordPanel.SetActive(true);
-        Time.timeScale = 0f;
+        
     }
     private void OnDestroy()
     {
-        // Очищаем все подписки при уничтожении игрока
+        
         OnCharChosen = null;
         OnWordChosen = null;
         
