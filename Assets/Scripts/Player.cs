@@ -72,11 +72,13 @@ public class Player : MonoBehaviour, IGameMember
         {
 
             Die();
+            SoundManager.Instance.Play("Shoot");
             bullet_images[current_Bcell].ChangeSprite();
             return true;
         }
         else
         {
+            SoundManager.Instance.Play("ShootFail");;
             return false;
         }
     }
@@ -87,12 +89,14 @@ public class Player : MonoBehaviour, IGameMember
         if (BulletCells[current_Bcell] == true)
         {
             BulletCells[current_Bcell] = false;
+            SoundManager.Instance.Play("Shoot");
             bullet_images[current_Bcell].ChangeSprite();
             enemy.Die();
             return true;
         }
         else
         {
+            SoundManager.Instance.Play("ShootFail");
             return false;
         }
 
@@ -100,6 +104,7 @@ public class Player : MonoBehaviour, IGameMember
     }
     public void Round()
     {
+        SoundManager.Instance.Play("Round");
         current_Bcell = UnityEngine.Random.Range(0, 6);
     }
 
@@ -109,6 +114,7 @@ public class Player : MonoBehaviour, IGameMember
         {
             if (BulletCells[i] == true)
             {
+                SoundManager.Instance.Play("BulletOut");
                 BulletCells[i] = false;
                 bullet_images[i].ChangeSprite();
                 break;
@@ -128,7 +134,7 @@ public class Player : MonoBehaviour, IGameMember
 
     public void WordGet()
     {
-        // Удаляем символ 8203 (Zero Width Space)
+        
         wordinput = player_string.text.Replace("\u200B", "").Trim();
     
         Debug.Log($"Input after cleaning: '{wordinput}'");

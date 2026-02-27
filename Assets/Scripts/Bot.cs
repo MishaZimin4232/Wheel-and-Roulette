@@ -51,12 +51,13 @@ public class Bot : MonoBehaviour,IGameMember
         if (BulletCells[current_Bcell])
         {
             Die();
+            SoundManager.Instance.Play("Shoot");
             bullet_images[current_Bcell].ChangeSprite();
             return true;
         }
         else
         {
-            
+            SoundManager.Instance.Play("ShootFail");
             return false;
         }
     }
@@ -68,16 +69,19 @@ public class Bot : MonoBehaviour,IGameMember
         {
             BulletCells[current_Bcell] = false;
             bullet_images[current_Bcell].ChangeSprite();
+            SoundManager.Instance.Play("Shoot");
             enemy.Die();
             return true;
         }
         else
         {
+            SoundManager.Instance.Play("ShootFail");
             return false;
         }
     }
     public void Round()
     {
+        SoundManager.Instance.Play("Round");
         current_Bcell = Random.Range(0, 6);
     }
    
@@ -87,6 +91,7 @@ public class Bot : MonoBehaviour,IGameMember
         {
             if (BulletCells[i] == true)
             {
+                SoundManager.Instance.Play("BulletOut");
                 bullet_images[i].ChangeSprite();
                 BulletCells[i] = false;
                 break;
@@ -99,7 +104,7 @@ public class Bot : MonoBehaviour,IGameMember
     {
         char var1 = ans[Random.Range(0, ans.Length)];
         char var2 = (char)Random.Range(97, 123);
-        char input=Random.Range(0,100)<=80?var2:var1;
+        char input=Random.Range(0,100)<=50?var2:var1;
         return input;
     }
 }

@@ -1,6 +1,6 @@
 using TMPro;
 using UnityEngine;
-
+using System.Collections;
 public class Game : MonoBehaviour
 {
     public QuestionBank bank;
@@ -21,10 +21,15 @@ public class Game : MonoBehaviour
     private Cell pendingCell;
     private bool waitingForPlayerInput = false;
     private bool IsFirstRound = true;
-    
+
+    [SerializeField]private GameObject WinMenu;
+    [SerializeField]private GameObject LoseMenu;
+    [SerializeField]private TextMeshProUGUI win_scores;
     
     void Start()
     {
+        WinMenu.SetActive(false);
+        LoseMenu.SetActive(false);
         board = FindObjectOfType<Board>();
         wheel = FindObjectOfType<Wheel>();
         player = FindObjectOfType<Player>();
@@ -102,7 +107,7 @@ public class Game : MonoBehaviour
                 break;
                 
             case GameStatus.Roulette:
-                ProcessRouletteState();
+                StartCoroutine(ProcessRouletteState());
                 break;
         }
     }
@@ -189,7 +194,6 @@ public class Game : MonoBehaviour
         }
         else
         {
-            
             ProcessCharInput();
         }
     }
@@ -207,19 +211,21 @@ public class Game : MonoBehaviour
         Debug.Log(input);
         if (CheckCharInput(input))
         {
+            SoundManager.Instance.Play("Correct");
             Narrator.Instance.Talk( "Right letter");
             board.OpenChar(input);
             target_player.AddBullet(1);
             pendingCell.Action(current_player,target_player, board);
             if (board.IsOpen())
             {
-                Narrator.Instance.Talk("Слово отгадано");
+                Narrator.Instance.Talk("Word is done!");
                 status = GameStatus.Roulette;
                 ChangePlayer(); 
             }
         }
         else
         {
+            SoundManager.Instance.Play("Wrong");
             Narrator.Instance.Talk("Wrong char, 1 bullet");
             current_player.AddBullet(1);
             ChangePlayer();
@@ -235,6 +241,7 @@ public class Game : MonoBehaviour
         {
             board.OpenString();
             pendingCell.Action(current_player,target_player, board);
+            SoundManager.Instance.Play("Correct");
             if (IsFirstRound)
             {
                 Narrator.Instance.Talk("Shit! Game Over!");
@@ -247,6 +254,7 @@ public class Game : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.Play("Wrong");
             current_player.AddBullet(2);
             ChangePlayer();
             IsFirstRound = false;
@@ -256,24 +264,22 @@ public class Game : MonoBehaviour
     }
     
     
-    private void ProcessRouletteState()
+    private IEnumerator ProcessRouletteState()
     {
         Narrator.Instance.Talk("Начинается русская рулетка");
-        Debug.Log($"state: ROULETTE, turn: {current_player}");
-        
-        
+        yield return new WaitForSeconds(0.5f);
         current_player.Round();
-        Debug.Log($" {current_player} вращает барабан");
-        
-        
+        yield return new WaitForSeconds(0.5f);
         if (current_player.ShootYourself())
         {
             Narrator.Instance.Talk($"💀 {current_player} killed!");
+            yield return new WaitForSeconds(1.5f);
             EndGame(current_player is Bot); 
         }
         else
         {
             Narrator.Instance.Talk("Empty...");
+            yield return new WaitForSeconds(1.5f);
             ChangePlayer();
             ProcessGameState();
         }
@@ -286,10 +292,8 @@ public class Game : MonoBehaviour
             Narrator.Instance.Talk("Введите букву!");
             return false;
         }
-    
         bool letterExists = false;
         bool letterAlreadyOpen = false;
-    
         foreach (char c in answer)
         {
             if (char.ToUpper(input) == char.ToUpper(c))
@@ -356,13 +360,18 @@ public class Game : MonoBehaviour
         if (playerWon)
         {
             Narrator.Instance.Talk("player take 500 score for winning");
+            SoundManager.Instance.Play("Win");
             player.AddScore(500);
             int totalScore = player.score;
-            Narrator.Instance.Talk($" You won {totalScore} score!");
+            WinMenu.SetActive(true);
+            win_scores.text = "You won" + totalScore + " score";
+            
         }
         else
         {
-            Narrator.Instance.Talk("Wasted!");
+            SoundManager.Instance.Play("Fail");
+           LoseMenu.SetActive(true);
         }
+        Time.timeScale = 0;
     }
 }
