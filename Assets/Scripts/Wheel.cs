@@ -5,20 +5,18 @@ using DG.Tweening;
 using System;
 using UnityEngine.EventSystems;
 
-public class Wheel : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDragHandler
+public class Wheel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHandler
 {
     [SerializeField] private List<Cell> cells;
     [SerializeField] private Pointer pointer;
     
     [Header("Wheel Rotation Settings")]
     [SerializeField] private float rotationDuration = 10f;
-    [SerializeField] private float pauseBeforeReturn = 1.5f;
     [SerializeField] private Ease rotationEase = Ease.OutCubic;
-    [SerializeField] private int fullRotations = 2;
-    [SerializeField] private float rotationvelocity;
+    [SerializeField] private int fullRotations = 5;
     
     [Header("Wheel Setup")]
-    [SerializeField] private float startAngle = -160f; 
+    [SerializeField] private float startAngle = -160f;
     [SerializeField] private float anglePerCell = 10f;
     private Vector2 lastpos_mouse;
     private float rotationAmount;
@@ -29,9 +27,8 @@ public class Wheel : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDragHandle
     private bool isSpinning = false;
     private Tween rotationTween;
     private Cell selectedCell;
-    private float targetRotationAngle;
-    private Coroutine returnCoroutine;
     public bool CanSpin;
+    
     private void Awake()
     {
         if (pointer == null)
@@ -66,7 +63,6 @@ public class Wheel : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDragHandle
         }
         
         selectedCell = cells[UnityEngine.Random.Range(0, cells.Count)];
-        
     }
     
     private void StartSpinAnimation()
@@ -80,29 +76,27 @@ public class Wheel : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDragHandle
         isSpinning = true;
         
         
-        int targetIndex = cells.IndexOf(selectedCell);
-        
-        
-        float cellAngle = startAngle + (targetIndex * anglePerCell);
-        
-        
         float currentY = transform.eulerAngles.y;
-        float targetY = NormalizeAngle(cellAngle);
+        
+        
+        int targetIndex = cells.IndexOf(selectedCell);
+        float targetCellAngle = NormalizeAngle(startAngle + (targetIndex * anglePerCell));
+        
+        
+        float angleDifference = CalculateShortestAngle(currentY, targetCellAngle);
         
        
-        float angleToTarget = (targetY - currentY + 360f) % 360f;
-        
-        
-        if (angleToTarget < 30f)
+        if (Mathf.Abs(angleDifference) < 30f)
         {
-            angleToTarget += 360f;
+            angleDifference += 360f;
         }
         
+       
+        float totalRotation = angleDifference + (360f * fullRotations);
         
-        float totalRotation = angleToTarget + (360f * fullRotations);
         
+        float targetRotationAngle = currentY + totalRotation;
         
-        targetRotationAngle = currentY + totalRotation;
         
         rotationTween = transform.DORotate(
             new Vector3(90, targetRotationAngle, 0),
@@ -120,61 +114,81 @@ public class Wheel : MonoBehaviour,IBeginDragHandler,IDragHandler,IEndDragHandle
         return angle;
     }
     
-    private void OnSpinComplete()
+    private float CalculateShortestAngle(float fromAngle, float toAngle)
     {
-        
-        returnCoroutine =StartCoroutine(ReturnToStartPosition());
+        float difference = (toAngle - fromAngle + 540f) % 360f - 180f;
+        return difference;
     }
     
-    private IEnumerator ReturnToStartPosition()
+    private void OnSpinComplete()
     {
+        isSpinning = false;
         
-        yield return new WaitForSeconds(pauseBeforeReturn);
-        rotationTween = transform.DORotate(
-            new Vector3(90, startAngle, 0),
-            rotationDuration * 0.5f, 
-            RotateMode.FastBeyond360
-        )
-        .SetEase(rotationEase)
-        .OnComplete(() => {
-            isSpinning = false;
-            returnCoroutine = null;
-           
-            OnCellLanded?.Invoke(selectedCell);
-            
-            
-        });
+        Vector3 currentRot = transform.eulerAngles;
+        transform.rotation = Quaternion.Euler(90, NormalizeAngle(currentRot.y), 0);
+        
+        OnCellLanded?.Invoke(selectedCell);
     }
-
+    
     public void OnBeginDrag(PointerEventData eventData)
     {
-        if (!CanSpin) return;
-        lastpos_mouse=eventData.position;
+        if (!CanSpin || isSpinning) return;
+        lastpos_mouse = eventData.position;
     }
+    
     public void OnDrag(PointerEventData eventData)
     {
-        if (isSpinning && !CanSpin) return;
+        if (!CanSpin || isSpinning) return;
         
         float deltaX = eventData.position.x - lastpos_mouse.x;
-        rotationAmount = deltaX * rotationSpeed*-1;
+        rotationAmount = deltaX * rotationSpeed * -1;
         transform.Rotate(0, rotationAmount, 0, Space.World);
         lastpos_mouse = eventData.position;
     }
-
+    
     public void OnEndDrag(PointerEventData eventData)
     {
-        SpinToRandomCell();
+        if (!CanSpin) return;
+        
+        
+        FindClosestCellToPointer();
+        StartSpinAnimation();
         CanSpin = false;
     }
+    
+    private void FindClosestCellToPointer()
+    {
+        if (pointer == null || cells == null || cells.Count == 0) return;
+        
+        float minAngleDifference = float.MaxValue;
+        Cell closestCell = null;
+        
+        float currentWheelY = transform.eulerAngles.y;
+        
+        foreach (Cell cell in cells)
+        {
+            int cellIndex = cells.IndexOf(cell);
+            float cellAngle = NormalizeAngle(startAngle + (cellIndex * anglePerCell));
+            float angleDifference = Mathf.Abs(CalculateShortestAngle(currentWheelY, cellAngle));
+            
+            if (angleDifference < minAngleDifference)
+            {
+                minAngleDifference = angleDifference;
+                closestCell = cell;
+            }
+        }
+        
+        if (closestCell != null)
+        {
+            selectedCell = closestCell;
+        }
+    }
+    
     public bool IsSpinning => isSpinning;
     
     private void OnDestroy()
     {
         if (rotationTween != null && rotationTween.IsActive())
             rotationTween.Kill();
-        if (returnCoroutine != null)
-        {
-            StopCoroutine(returnCoroutine);
-        }
     }
 }

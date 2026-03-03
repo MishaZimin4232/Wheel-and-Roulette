@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: QuestionBank
   m_EditorClassIdentifier: Assembly-CSharp::QuestionBank
   qb:
-  - answer: PEOPLE
-    question: HOMO SAPIENS
-  - answer: MOTHER
-    question: The most famous star
-  - answer: FRIEND
-    question: Your bestie
-  - answer: FAMILY
-    question: Its machine, that copy humans' behaivior
+  - answer: BANANA
+    question: ' A yellow fruit that monkeys love'
+  - answer: WINTER
+    question: The coldest season of the year
+  - answer: PLANET
+    question: celestial body that orbits a star.
+  - answer: PUZZLE
+    question: A game, that tests your knowledge or logic

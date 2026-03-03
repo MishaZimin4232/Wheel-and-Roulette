@@ -64,6 +64,7 @@
     <Compile Include="Assets\Scripts\Cells\ShootEnemy.cs" />
     <Compile Include="Assets\Scripts\Cells\TakeOut.cs" />
     <Compile Include="Assets\Scripts\Cells\ShootSelf.cs" />
+    <Compile Include="Assets\eretichable Technologies\Revolver Gun (Low Poly)\Scripts\Gun_rotation.cs" />
     <Compile Include="Assets\Scripts\Bot.cs" />
     <Compile Include="Assets\Scripts\WordBank\QuestionBank.cs" />
     <Compile Include="Assets\Scripts\Sound.cs" />
@@ -1055,6 +1056,10 @@
     <ProjectReference Include="Assembly-CSharp-firstpass.csproj">
       <Project>{48cbf0c9-0baa-080b-6d5b-95e432b90f24}</Project>
       <Name>Assembly-CSharp-firstpass</Name>
+    </ProjectReference>
+    <ProjectReference Include="ProPixelizer.csproj">
+      <Project>{334d147d-8362-880f-001b-424b56dc72f6}</Project>
+      <Name>ProPixelizer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

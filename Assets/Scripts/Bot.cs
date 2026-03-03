@@ -33,6 +33,7 @@ public class Bot : MonoBehaviour,IGameMember
         {
             if (!BulletCells[i])
             {
+                SoundManager.Instance.Play("Reload");
                 BulletCells[i] = true;
                 bullet_images[i].ChangeSprite();
                 current_count++;
@@ -43,11 +44,12 @@ public class Bot : MonoBehaviour,IGameMember
         {
             Narrator.Instance.Talk("У вас полный бак!");
         }
+        SoundManager.Instance.Play("AfterReload");
     }
 
     public bool ShootYourself()
     {
-        Round();
+        
         if (BulletCells[current_Bcell])
         {
             Die();
@@ -64,7 +66,7 @@ public class Bot : MonoBehaviour,IGameMember
 
     public bool ShootEnemy(IGameMember enemy)
     {
-        Round();
+        
         if (BulletCells[current_Bcell] == true)
         {
             BulletCells[current_Bcell] = false;
@@ -104,7 +106,7 @@ public class Bot : MonoBehaviour,IGameMember
     {
         char var1 = ans[Random.Range(0, ans.Length)];
         char var2 = (char)Random.Range(97, 123);
-        char input=Random.Range(0,100)<=50?var2:var1;
+        char input=Random.Range(0,100)<70?var2:var1;
         return input;
     }
 }

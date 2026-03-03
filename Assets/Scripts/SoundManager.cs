@@ -58,6 +58,7 @@ public class SoundManager : MonoBehaviour
         if (SoundsDictionary.TryGetValue(name, out Sound sound))
         {
             sound.source.Play();
+            Debug.LogWarning($"Music '{name}'is started ");
         }
         else
         {
@@ -70,9 +71,15 @@ public class SoundManager : MonoBehaviour
         if (SoundsDictionary.TryGetValue(name, out Sound sound))
         {
             sound.source.Stop();
+            Debug.LogWarning($"Music '{name}'is stopped ");
+        }
+        else
+        {
+            Debug.LogWarning($"Music '{name}' not found!");
         }
     }
-    
+
+ 
     public void SetVolume(float volume)
     {
         Volume = volume;

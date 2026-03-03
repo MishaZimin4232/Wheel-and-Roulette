@@ -1,6 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ProPixelizer", "ProPixelizer.csproj", "{334d147d-8362-880f-001b-424b56dc72f6}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp-firstpass", "Assembly-CSharp-firstpass.csproj", "{48cbf0c9-0baa-080b-6d5b-95e432b90f24}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Assembly-CSharp", "Assembly-CSharp.csproj", "{fd8a32ee-3ec8-5e0a-89bc-01cfe5a076d8}"
@@ -12,6 +14,8 @@ Global
 		Debug|Any CPU = Debug|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{334d147d-8362-880f-001b-424b56dc72f6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{334d147d-8362-880f-001b-424b56dc72f6}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{48cbf0c9-0baa-080b-6d5b-95e432b90f24}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{48cbf0c9-0baa-080b-6d5b-95e432b90f24}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{fd8a32ee-3ec8-5e0a-89bc-01cfe5a076d8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU

@@ -13,8 +13,10 @@ public class Player : MonoBehaviour, IGameMember
     public bool[] BulletCells { get; set; } = new bool[6];
     public int current_Bcell{ get; set; } = 0;
     public TextMeshProUGUI score_text;
-    public TextMeshProUGUI player_char;
-    public TextMeshProUGUI player_string;
+    public TMP_InputField player_char;
+    public TMP_InputField player_string;
+    public Transform revolver;
+    private bool IsRotated = false;
 
     public GameObject ChoisePanel;
     public GameObject LetterPanel;
@@ -52,6 +54,7 @@ public class Player : MonoBehaviour, IGameMember
         {
             if (!BulletCells[i])
             {
+                SoundManager.Instance.Play("Reload");
                 BulletCells[i] = true;
                 bullet_images[i].ChangeSprite();
                 current_count++;
@@ -62,12 +65,14 @@ public class Player : MonoBehaviour, IGameMember
         {
             Narrator.Instance.Talk("You have full pack!");
         }
+        SoundManager.Instance.Play("AfterReload");
     }
 
 
     public bool ShootYourself()
     {
-        Round();
+        
+        MoveRevolver();
         if (BulletCells[current_Bcell])
         {
 
@@ -81,11 +86,12 @@ public class Player : MonoBehaviour, IGameMember
             SoundManager.Instance.Play("ShootFail");;
             return false;
         }
+        
     }
 
     public bool ShootEnemy(IGameMember enemy)
     {
-        Round();
+        
         if (BulletCells[current_Bcell] == true)
         {
             BulletCells[current_Bcell] = false;
@@ -118,16 +124,15 @@ public class Player : MonoBehaviour, IGameMember
                 BulletCells[i] = false;
                 bullet_images[i].ChangeSprite();
                 break;
-
             }
         }
-
     }
 
     public void CharGet()
     {
         
         charinput = player_char.text[0];
+        player_char.text = "";
         OnCharChosen?.Invoke();
         LetterPanel.SetActive(false);
     }
@@ -136,10 +141,7 @@ public class Player : MonoBehaviour, IGameMember
     {
         
         wordinput = player_string.text.Replace("\u200B", "").Trim();
-    
-        Debug.Log($"Input after cleaning: '{wordinput}'");
-        Debug.Log($"Cleaned length: {wordinput.Length}");
-    
+        player_string.text = "";
         OnWordChosen?.Invoke();
         WordPanel.SetActive(false);
     }
@@ -181,6 +183,22 @@ public class Player : MonoBehaviour, IGameMember
         OnWordChosen = null;
         
     }
+
+    public void MoveRevolver()
+    {
+        if (!IsRotated)
+        {
+            revolver.transform.eulerAngles = new Vector3(-30, 150, 0);
+            IsRotated = true;
+        }
+        else
+        {
+            revolver.transform.eulerAngles = new Vector3(0, -50, 0);
+            IsRotated = false;
+        }
+    }
+
+    
 
 
 }
