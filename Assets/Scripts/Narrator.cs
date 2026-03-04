@@ -1,8 +1,13 @@
+using System.Collections;
 using UnityEngine;
+using System.Collections.Generic;
+using TMPro;
 
 public class Narrator : MonoBehaviour
 {
     public static Narrator Instance { get; private set; }
+    public GameObject NarratorSpeech;
+    public TMP_Text NarratorText;
     private void Awake()
     {
         if (Instance == null)
@@ -15,9 +20,13 @@ public class Narrator : MonoBehaviour
             Destroy(gameObject);
         }
     }
-    public void Talk(string message)
+    public IEnumerator Talk(string message)
     {
-        Debug.Log($"<color=green>[Narrator]: {message}</color>");
+        
+        NarratorSpeech.SetActive(true);
+        NarratorText.text = message;
+        yield return new WaitForSeconds(2);
+        NarratorSpeech.SetActive(false);
     }
     public void Task(string message)
     {

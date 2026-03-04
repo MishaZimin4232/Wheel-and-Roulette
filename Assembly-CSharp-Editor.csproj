@@ -1077,10 +1077,6 @@
       <Project>{fd8a32ee-3ec8-5e0a-89bc-01cfe5a076d8}</Project>
       <Name>Assembly-CSharp</Name>
     </ProjectReference>
-    <ProjectReference Include="ProPixelizer.csproj">
-      <Project>{334d147d-8362-880f-001b-424b56dc72f6}</Project>
-      <Name>ProPixelizer</Name>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

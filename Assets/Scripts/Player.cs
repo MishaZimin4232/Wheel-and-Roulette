@@ -63,7 +63,7 @@ public class Player : MonoBehaviour, IGameMember
         }
         if (current_count == 0)
         {
-            Narrator.Instance.Talk("You have full pack!");
+            StartCoroutine(Narrator.Instance.Talk("You have full pack!"));
         }
         SoundManager.Instance.Play("AfterReload");
     }
@@ -83,7 +83,8 @@ public class Player : MonoBehaviour, IGameMember
         }
         else
         {
-            SoundManager.Instance.Play("ShootFail");;
+            SoundManager.Instance.Play("ShootFail");
+            MoveRevolver();
             return false;
         }
         
@@ -129,8 +130,12 @@ public class Player : MonoBehaviour, IGameMember
     }
 
     public void CharGet()
-    {
-        
+    {   
+        if (string.IsNullOrEmpty(player_char.text))
+        {
+           
+            return;
+        }
         charinput = player_char.text[0];
         player_char.text = "";
         OnCharChosen?.Invoke();
@@ -139,7 +144,11 @@ public class Player : MonoBehaviour, IGameMember
 
     public void WordGet()
     {
-        
+        if (string.IsNullOrEmpty(player_string.text))
+        {
+            
+            return;
+        }
         wordinput = player_string.text.Replace("\u200B", "").Trim();
         player_string.text = "";
         OnWordChosen?.Invoke();

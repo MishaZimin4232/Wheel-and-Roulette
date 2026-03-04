@@ -55,12 +55,10 @@ public class Board : MonoBehaviour
         
         if (unopened.Count == 0)
         {
-            Debug.Log("Все буквы уже открыты!");
+            
             return;
         }
-        
         char randomLetter = unopened[Random.Range(0, unopened.Count)];
-        Debug.Log($"Открываем случайную неоткрытую букву: '{randomLetter}'");
         OpenChar(randomLetter);
     }
 

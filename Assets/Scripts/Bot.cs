@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using System.Collections;
 
 public class Bot : MonoBehaviour,IGameMember
 {
@@ -9,6 +11,7 @@ public class Bot : MonoBehaviour,IGameMember
     public bool IsAlive { get; set; }=true;
     private string ans;
     public Bullet[] bullet_images=new Bullet[6];
+    public TMP_Text enemy_ans;
     public void AddScore(int _score)
     {
         this.score += _score;
@@ -42,7 +45,7 @@ public class Bot : MonoBehaviour,IGameMember
 
         if (current_count == 0)
         {
-            Narrator.Instance.Talk("У вас полный бак!");
+            StartCoroutine(Narrator.Instance.Talk("Bot have full pack!"));
         }
         SoundManager.Instance.Play("AfterReload");
     }
@@ -97,7 +100,6 @@ public class Bot : MonoBehaviour,IGameMember
                 bullet_images[i].ChangeSprite();
                 BulletCells[i] = false;
                 break;
-
             }
         }
     }
@@ -107,6 +109,15 @@ public class Bot : MonoBehaviour,IGameMember
         char var1 = ans[Random.Range(0, ans.Length)];
         char var2 = (char)Random.Range(97, 123);
         char input=Random.Range(0,100)<70?var2:var1;
+        enemy_ans.text ="My answer - "+  input;
+        StartCoroutine(ShowAnswer());
         return input;
+    }
+
+    private IEnumerator ShowAnswer()
+    {
+        enemy_ans.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        enemy_ans.gameObject.SetActive(false);
     }
 }

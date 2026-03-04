@@ -48,7 +48,7 @@ public class Game : MonoBehaviour
         board.EnterQuestion(question);
         bot.GetAnswer(answer);
         status = GameStatus.Wheel;
-        Narrator.Instance.Talk("Welcome to the Wheel and Roulette!");
+        StartCoroutine(Narrator.Instance.Talk("Welcome to the Wheel and Roulette!"));
         Narrator.Instance.Task(question);
         wheel.OnCellLanded += OnCellLanded;
         SubscribeToPlayerEvents();
@@ -137,12 +137,12 @@ public class Game : MonoBehaviour
         if (current_player is Player)
         {
             
-            Narrator.Instance.Talk("Spin the wheel");
+            
             wheel.CanSpin=true;
         }
         else
         {
-            Debug.Log("Бот вращает колесо...");
+            
             wheel.SpinToRandomCell();
         }
         
@@ -214,17 +214,16 @@ public class Game : MonoBehaviour
         SoundManager.Instance.Play("Spinning");
         IsFirstRound = false;
         char input = current_player.CharInput();
-        Debug.Log(input);
         if (CheckCharInput(input))
         {
             SoundManager.Instance.Play("Correct");
-            Narrator.Instance.Talk( "Right letter");
+            StartCoroutine(Narrator.Instance.Talk( "Right letter"));
             board.OpenChar(input);
             target_player.AddBullet(1);
             pendingCell.Action(current_player,target_player, board);
             if (board.IsOpen())
             {
-                Narrator.Instance.Talk("Word is done!");
+                StartCoroutine(Narrator.Instance.Talk("Word is done!"));
                 SoundManager.Instance.Stop("Spinning");
                 status = GameStatus.Roulette;
                 ChangePlayer(); 
@@ -233,7 +232,7 @@ public class Game : MonoBehaviour
         else
         {
             SoundManager.Instance.Play("Wrong");
-            Narrator.Instance.Talk("Wrong char, 1 bullet");
+            StartCoroutine(Narrator.Instance.Talk("Wrong char, 1 bullet"));
             current_player.AddBullet(1);
             ChangePlayer();
         }
@@ -281,17 +280,18 @@ public class Game : MonoBehaviour
         if (current_player.ShootYourself())
         {
             
-            Narrator.Instance.Talk($"💀 {current_player} killed!");
+            StartCoroutine(Narrator.Instance.Talk($"💀 {current_player} killed!"));
             yield return new WaitForSeconds(3f);
             EndGame(current_player is Bot); 
         }
         else
         {
-            Narrator.Instance.Talk("Empty...");
+            StartCoroutine(Narrator.Instance.Talk("Empty..."));
             yield return new WaitForSeconds(3f);
             ChangePlayer();
             ProcessGameState();
         }
+        yield return new WaitForSeconds(1f);
         if(current_player is Player)
             player.MoveRevolver();;
     }
@@ -372,7 +372,7 @@ public class Game : MonoBehaviour
         wheel.CanSpin = false;
         if (playerWon)
         {
-            Narrator.Instance.Talk("player take 500 score for winning");
+            StartCoroutine(Narrator.Instance.Talk("player take 500 score for winning"));
             SoundManager.Instance.Play("Win");
             player.AddScore(500);
             int totalScore = player.score;
