@@ -235,10 +235,10 @@ public class Game : MonoBehaviour
     private void ShowPlayerInputChoice()
     {
         
-        ProcessPlayerCharInput();
+        ProcessCharInput();
     }
     
-    private void ProcessPlayerCharInput()
+    private void ProcessCharInput()
     {
         SoundManager.Instance.Play("Spinning");
         IsFirstRound = false;
