@@ -21,14 +21,17 @@ public class Game : MonoBehaviour
     private Cell pendingCell;
     private bool waitingForPlayerInput = false;
     private bool IsFirstRound = true;
+    private bool IsSpecial;
 
     [SerializeField]private GameObject WinMenu;
     [SerializeField]private GameObject LoseMenu;
+    [SerializeField]private GameObject Choise;
     [SerializeField]private TextMeshProUGUI win_scores;
     
    
     void Start()
     {
+        IsSpecial = true;
         SoundManager.Instance.Play("Spinning");
         WinMenu.SetActive(false);
         LoseMenu.SetActive(false);
@@ -51,6 +54,7 @@ public class Game : MonoBehaviour
         StartCoroutine(Narrator.Instance.Talk("Welcome to the Wheel and Roulette!"));
         Narrator.Instance.Task(question);
         wheel.OnCellLanded += OnCellLanded;
+        //player.AddBullet(2);
         SubscribeToPlayerEvents();
         ProcessGameState();
     }
@@ -161,6 +165,7 @@ public class Game : MonoBehaviour
    
     private void ActivatePendingCell()
     {
+        
         if (pendingCell == null)
         {
             Debug.LogError("Нет клетки для активации!");
@@ -177,11 +182,29 @@ public class Game : MonoBehaviour
         {
         
             pendingCell.Action(current_player, target_player, board);
-            
+            if (board.IsOpen())
+            {
+                StartCoroutine(Narrator.Instance.Talk("Word is done!"));
+                SoundManager.Instance.Stop("Spinning");
+                status = GameStatus.Roulette;
+                ChangePlayer();
+                pendingCell = null;
+                ProcessGameState();
+                return;
+            }
+
             if (!player.IsAlive || !bot.IsAlive)
             {
-                EndGame(player.IsAlive);
-                return;
+                if (!bot.IsAlive)
+                {
+                     SpecialChoise();
+                     return;
+                }
+                else
+                {
+                    EndGame(false);
+                    return;
+                }
             }
             pendingCell = null;
             ProcessGameState();
@@ -189,7 +212,6 @@ public class Game : MonoBehaviour
         
         
     }
-    
     private void HandleScoreCell(ScoreCell cell)
     {
         if (current_player is Player)
@@ -269,31 +291,68 @@ public class Game : MonoBehaviour
        
         ProcessGameState();
     }
-    
-    
+
+    private void SpecialChoise()
+    {
+        Time.timeScale = 0;
+        Choise.SetActive(true);
+    }
+
+    public void Accept()
+    {
+        Time.timeScale = 1;
+        Choise.SetActive(false);
+        StartCoroutine(ProcessSingleRoulette());
+    }
+    public void Decline()
+    {
+        Time.timeScale = 1;
+        Choise.SetActive(false);
+        IsSpecial = false;
+        EndGame(true);
+    }
+
+    private IEnumerator ProcessSingleRoulette()
+    {
+        yield return new WaitForSeconds(1f);
+        player.Round();
+        yield return new WaitForSeconds(1f);
+        if (player.ShootYourself())
+        {
+            yield return new WaitForSeconds(1f);
+            EndGame(false); 
+        }
+        else
+        {
+            yield return new WaitForSeconds(1f);
+            EndGame(true);
+        }
+        
+    }
+
     private IEnumerator ProcessRouletteState()
     {
        
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
         current_player.Round();
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
         if (current_player.ShootYourself())
         {
             
             StartCoroutine(Narrator.Instance.Talk($"💀 {current_player} killed!"));
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(1f);
             EndGame(current_player is Bot); 
         }
         else
         {
             StartCoroutine(Narrator.Instance.Talk("Empty..."));
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(1f);
+            
             ChangePlayer();
             ProcessGameState();
         }
         yield return new WaitForSeconds(1f);
-        if(current_player is Player)
-            player.MoveRevolver();;
+        
     }
     
     private bool CheckCharInput(char input)
@@ -343,11 +402,7 @@ public class Game : MonoBehaviour
         {
             return false;
         }
-        
     }
-    
-    
-    
     private void ChangePlayer()
     {
         if (current_player == player)
@@ -372,12 +427,20 @@ public class Game : MonoBehaviour
         wheel.CanSpin = false;
         if (playerWon)
         {
-            StartCoroutine(Narrator.Instance.Talk("player take 500 score for winning"));
-            SoundManager.Instance.Play("Win");
-            player.AddScore(500);
-            int totalScore = player.score;
+            int totalScore;
+            if (IsSpecial)
+            {
+                SoundManager.Instance.Play("Win");
+                totalScore= player.score;
+            }
+            else
+            {
+                SoundManager.Instance.Play("Win");
+                totalScore= 500;
+            }
             WinMenu.SetActive(true);
             win_scores.text = "You won - " + totalScore + " score";
+            
             
         }
         else

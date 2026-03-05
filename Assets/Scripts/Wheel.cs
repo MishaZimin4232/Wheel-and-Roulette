@@ -46,7 +46,6 @@ public class Wheel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHan
     {
         if (isSpinning)
         {
-            Debug.Log("Колесо уже вращается!");
             return;
         }
         
@@ -151,37 +150,9 @@ public class Wheel : MonoBehaviour, IBeginDragHandler, IDragHandler, IEndDragHan
         if (!CanSpin) return;
         
         
-        FindClosestCellToPointer();
+        SelectRandomCell();
         StartSpinAnimation();
         CanSpin = false;
-    }
-    
-    private void FindClosestCellToPointer()
-    {
-        if (pointer == null || cells == null || cells.Count == 0) return;
-        
-        float minAngleDifference = float.MaxValue;
-        Cell closestCell = null;
-        
-        float currentWheelY = transform.eulerAngles.y;
-        
-        foreach (Cell cell in cells)
-        {
-            int cellIndex = cells.IndexOf(cell);
-            float cellAngle = NormalizeAngle(startAngle + (cellIndex * anglePerCell));
-            float angleDifference = Mathf.Abs(CalculateShortestAngle(currentWheelY, cellAngle));
-            
-            if (angleDifference < minAngleDifference)
-            {
-                minAngleDifference = angleDifference;
-                closestCell = cell;
-            }
-        }
-        
-        if (closestCell != null)
-        {
-            selectedCell = closestCell;
-        }
     }
     
     public bool IsSpinning => isSpinning;

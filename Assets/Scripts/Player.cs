@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using System;
+using System.Collections;
 using UnityEngine.InputSystem;
 using System.Collections.Generic;
 
@@ -23,7 +24,8 @@ public class Player : MonoBehaviour, IGameMember
     public GameObject WordPanel;
     public Bullet[] bullet_images=new Bullet[6];
     public Action OnCharChosen;      
-    public Action OnWordChosen; 
+    public Action OnWordChosen;
+    private bool ShootResult;
     
 
     void Start()
@@ -71,25 +73,43 @@ public class Player : MonoBehaviour, IGameMember
 
     public bool ShootYourself()
     {
-        
-        MoveRevolver();
-        if (BulletCells[current_Bcell])
+        StartCoroutine(ShootYourselfRoutine());
+        if (ShootResult)
         {
-
-            Die();
-            SoundManager.Instance.Play("Shoot");
-            bullet_images[current_Bcell].ChangeSprite();
+            ShootResult = false;
             return true;
         }
         else
         {
-            SoundManager.Instance.Play("ShootFail");
-            MoveRevolver();
+            ShootResult = false;
             return false;
         }
+       
         
     }
-
+    private IEnumerator ShootYourselfRoutine()
+    {
+        MoveRevolver();
+        yield return new WaitForSeconds(1f);
+    
+        
+        if (BulletCells[current_Bcell])
+        {
+            
+            Die();
+            SoundManager.Instance.Play("Shoot");
+            bullet_images[current_Bcell].ChangeSprite();
+            ShootResult = true;
+        }
+        else
+        {
+            SoundManager.Instance.Play("ShootFail");
+            ShootResult = false;
+        }
+    
+        yield return new WaitForSeconds(1f);
+        MoveRevolver();
+    }
     public bool ShootEnemy(IGameMember enemy)
     {
         
@@ -206,8 +226,5 @@ public class Player : MonoBehaviour, IGameMember
             IsRotated = false;
         }
     }
-
     
-
-
 }

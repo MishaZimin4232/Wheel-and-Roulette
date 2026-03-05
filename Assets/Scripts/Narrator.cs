@@ -24,7 +24,7 @@ public class Narrator : MonoBehaviour
     {
         
         NarratorSpeech.SetActive(true);
-        NarratorText.text = message;
+        NarratorText.text = "Narrator: "+message;
         yield return new WaitForSeconds(2);
         NarratorSpeech.SetActive(false);
     }

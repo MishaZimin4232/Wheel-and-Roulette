@@ -7,7 +7,7 @@ public class TakeOut :  Cell
 
     public override void Action(IGameMember current_player,IGameMember target_player,Board board)
     {
-        Narrator.Instance.Talk("TakeOut");
+       
         if (current_player.BulletCells[current_player.current_Bcell])
         {
             current_player.TakeOut();
@@ -15,7 +15,7 @@ public class TakeOut :  Cell
         }
         else
         {
-            StartCoroutine(Narrator.Instance.Talk("Narrator laughting: you don't have bullets, asshole!"));
+            StartCoroutine(Narrator.Instance.Talk("you don't have bullets, asshole!"));
         }
         
     }
