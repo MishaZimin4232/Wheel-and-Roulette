@@ -1,4 +1,6 @@
+using TMPro;
 using UnityEngine;
+using System.Collections;
 
 public class Bot : MonoBehaviour,IGameMember
 {
@@ -8,7 +10,8 @@ public class Bot : MonoBehaviour,IGameMember
     private char charinput;
     public bool IsAlive { get; set; }=true;
     private string ans;
-
+    public Bullet[] bullet_images=new Bullet[6];
+    public TMP_Text enemy_ans;
     public void AddScore(int _score)
     {
         this.score += _score;
@@ -33,46 +36,57 @@ public class Bot : MonoBehaviour,IGameMember
         {
             if (!BulletCells[i])
             {
+                SoundManager.Instance.Play("Reload");
                 BulletCells[i] = true;
+                bullet_images[i].ChangeSprite();
                 current_count++;
             }
         }
 
         if (current_count == 0)
         {
-            Narrator.Instance.Talk("You have full pack!");
+            StartCoroutine(Narrator.Instance.Talk("Bot have full pack!"));
         }
+        SoundManager.Instance.Play("AfterReload");
     }
 
     public bool ShootYourself()
     {
+        
         if (BulletCells[current_Bcell])
         {
             Die();
+            SoundManager.Instance.Play("Shoot");
+            bullet_images[current_Bcell].ChangeSprite();
             return true;
         }
         else
         {
-            
+            SoundManager.Instance.Play("ShootFail");
             return false;
         }
     }
 
     public bool ShootEnemy(IGameMember enemy)
     {
+        
         if (BulletCells[current_Bcell] == true)
         {
             BulletCells[current_Bcell] = false;
+            bullet_images[current_Bcell].ChangeSprite();
+            SoundManager.Instance.Play("Shoot");
             enemy.Die();
             return true;
         }
         else
         {
+            SoundManager.Instance.Play("ShootFail");
             return false;
         }
     }
     public void Round()
     {
+        SoundManager.Instance.Play("Round");
         current_Bcell = Random.Range(0, 6);
     }
    
@@ -82,9 +96,10 @@ public class Bot : MonoBehaviour,IGameMember
         {
             if (BulletCells[i] == true)
             {
+                SoundManager.Instance.Play("BulletOut");
+                bullet_images[i].ChangeSprite();
                 BulletCells[i] = false;
                 break;
-
             }
         }
     }
@@ -92,8 +107,17 @@ public class Bot : MonoBehaviour,IGameMember
     public char CharInput()
     {
         char var1 = ans[Random.Range(0, ans.Length)];
-        char var2 = (char)Random.Range(97, 123);;
-        char input=Random.Range(0,100)<=80?var2:var1;
+        char var2 = (char)Random.Range(97, 123);
+        char input=Random.Range(0,100)<70?var2:var1;
+        enemy_ans.text ="My answer - "+  input;
+        StartCoroutine(ShowAnswer());
         return input;
+    }
+
+    private IEnumerator ShowAnswer()
+    {
+        enemy_ans.gameObject.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        enemy_ans.gameObject.SetActive(false);
     }
 }

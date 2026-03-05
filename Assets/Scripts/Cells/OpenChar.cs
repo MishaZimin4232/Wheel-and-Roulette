@@ -7,6 +7,6 @@ public class OpenChar : Cell
     {
         Narrator.Instance.Talk("Выпала OpenChar");
         board.RandomOpenChar();
-        Narrator.Instance.Talk("Opened new letter!");
+        StartCoroutine(Narrator.Instance.Talk("Opened new letter!"));
     }
 }

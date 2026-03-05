@@ -6,9 +6,9 @@ public class ScoreCell :  Cell
     
     public override void Action(IGameMember current_player,IGameMember target_player,Board board)
     {
-        Narrator.Instance.Talk("Выпала ScoreCell");
+        
         current_player.AddScore(Score);
-        Narrator.Instance.Talk($"Player take {Score} scores!");
+        
     }
 
 }

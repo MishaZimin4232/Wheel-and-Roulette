@@ -1,6 +1,6 @@
 using TMPro;
 using UnityEngine;
-
+using System.Collections;
 public class Game : MonoBehaviour
 {
     public QuestionBank bank;
@@ -18,10 +18,23 @@ public class Game : MonoBehaviour
     public TextMeshProUGUI Turn;
     
     private bool isCellSelected = false;
-    private Cell pendingCell; 
+    private Cell pendingCell;
+    private bool waitingForPlayerInput = false;
+    private bool IsFirstRound = true;
+    private bool IsSpecial;
+
+    [SerializeField]private GameObject WinMenu;
+    [SerializeField]private GameObject LoseMenu;
+    [SerializeField]private GameObject Choise;
+    [SerializeField]private TextMeshProUGUI win_scores;
     
+   
     void Start()
     {
+        IsSpecial = true;
+        SoundManager.Instance.Play("Spinning");
+        WinMenu.SetActive(false);
+        LoseMenu.SetActive(false);
         board = FindObjectOfType<Board>();
         wheel = FindObjectOfType<Wheel>();
         player = FindObjectOfType<Player>();
@@ -35,14 +48,54 @@ public class Game : MonoBehaviour
         question = bank.qb[question_number].question;
         
         board.SetWord(answer);
+        board.EnterQuestion(question);
         bot.GetAnswer(answer);
         status = GameStatus.Wheel;
-        Narrator.Instance.Talk("Welcome to the Wheel and Roulette!");
+        StartCoroutine(Narrator.Instance.Talk("Welcome to the Wheel and Roulette!"));
         Narrator.Instance.Task(question);
         wheel.OnCellLanded += OnCellLanded;
+        //player.AddBullet(2);
+        SubscribeToPlayerEvents();
         ProcessGameState();
     }
+    private void SubscribeToPlayerEvents()
+    {
+        
+        UnsubscribeFromPlayerEvents();
+        
+        
+        player.OnCharChosen += OnPlayerCharChosen;
+        player.OnWordChosen += OnPlayerWordChosen;
+    }
     
+    private void UnsubscribeFromPlayerEvents()
+    {
+        if (player != null)
+        {
+            player.OnCharChosen -= OnPlayerCharChosen;
+            player.OnWordChosen -= OnPlayerWordChosen;
+        }
+    }
+
+    private void OnPlayerCharChosen()
+    {
+        if (waitingForPlayerInput)
+        {
+            waitingForPlayerInput = false;
+            ProcessCharInput();
+            
+        }
+        SoundManager.Instance.Play("Spinning");
+    }
+    private void OnPlayerWordChosen()
+    {
+        if (waitingForPlayerInput)
+        {
+            waitingForPlayerInput = false;
+            ProcessWordInput();
+        }
+        
+    }
     private void OnDestroy()
     {
         if (wheel != null)
@@ -56,7 +109,6 @@ public class Game : MonoBehaviour
             EndGame(player.IsAlive);
             return;
         }
-        
         switch (status)
         {
             case GameStatus.Wheel:
@@ -64,7 +116,7 @@ public class Game : MonoBehaviour
                 break;
                 
             case GameStatus.Roulette:
-                ProcessRouletteState();
+                StartCoroutine(ProcessRouletteState());
                 break;
         }
     }
@@ -88,12 +140,13 @@ public class Game : MonoBehaviour
         
         if (current_player is Player)
         {
-            Debug.Log("Игрок вращает колесо...");
-            wheel.SpinToRandomCell();
+            
+            
+            wheel.CanSpin=true;
         }
         else
         {
-         
+            // Бот - выбираем случайную клетку
             Debug.Log("Бот вращает колесо...");
             wheel.SpinToRandomCell();
         }
@@ -101,18 +154,25 @@ public class Game : MonoBehaviour
         isCellSelected = true;
     }
     
-    
+    /// <summary>
+    /// Вызывается, когда колесо завершило вращение и клетка приземлилась
+    /// </summary>
     private void OnCellLanded(Cell landedCell)
     {
-   
+       
+        
+        // Сохраняем клетку для активации
         pendingCell = landedCell;
         isCellSelected = false;
+        
+        // Активируем клетку
         ActivatePendingCell();
     }
     
    
     private void ActivatePendingCell()
     {
+        
         if (pendingCell == null)
         {
             Debug.LogError("Нет клетки для активации!");
@@ -120,45 +180,55 @@ public class Game : MonoBehaviour
             return;
         }
         
-        
-        
-       
         if (pendingCell is ScoreCell scoreCell)
         {
-           
+           Debug.Log("pendingCell is ScoreCell");
             HandleScoreCell(scoreCell);
         }
         else
         {
         
             pendingCell.Action(current_player, target_player, board);
-            
-            if (!player.IsAlive || !bot.IsAlive)
+            if (board.IsOpen())
             {
-                EndGame(player.IsAlive);
+                StartCoroutine(Narrator.Instance.Talk("Word is done!"));
+                SoundManager.Instance.Stop("Spinning");
+                status = GameStatus.Roulette;
+                ChangePlayer();
+                pendingCell = null;
+                ProcessGameState();
                 return;
             }
-            
+
+            if (!player.IsAlive || !bot.IsAlive)
+            {
+                if (!bot.IsAlive)
+                {
+                     SpecialChoise();
+                     return;
+                }
+                else
+                {
+                    EndGame(false);
+                    return;
+                }
+            }
+            pendingCell = null;
             ProcessGameState();
         }
         
-        pendingCell = null;
+        
     }
-    
     private void HandleScoreCell(ScoreCell cell)
     {
-        
-        
-        
         if (current_player is Player)
         {
-           
+            SoundManager.Instance.Stop("Spinning");
             ShowPlayerInputChoice();
         }
         else
         {
-            
-            ProcessBotCharInput();
+            ProcessCharInput();
         }
     }
     
@@ -170,42 +240,45 @@ public class Game : MonoBehaviour
     
     private void ProcessPlayerCharInput()
     {
-        char playerChar = player.CharInput();
-        
-        if (CheckCharInput(playerChar))
+        SoundManager.Instance.Play("Spinning");
+        IsFirstRound = false;
+        char input = current_player.CharInput();
+        if (CheckCharInput(input))
         {
-            Narrator.Instance.Talk("Правильная буква");
-            board.OpenChar(playerChar);
+            SoundManager.Instance.Play("Correct");
+            StartCoroutine(Narrator.Instance.Talk( "Right letter"));
+            board.OpenChar(input);
             target_player.AddBullet(1);
             pendingCell.Action(current_player,target_player, board);
             if (board.IsOpen())
             {
-    
-                Narrator.Instance.Talk("Слово отгадано");
+                StartCoroutine(Narrator.Instance.Talk("Word is done!"));
+                SoundManager.Instance.Stop("Spinning");
                 status = GameStatus.Roulette;
                 ChangePlayer(); 
             }
         }
         else
         {
-            Narrator.Instance.Talk("Неправильная буква");
+            SoundManager.Instance.Play("Wrong");
+            StartCoroutine(Narrator.Instance.Talk("Wrong char, 1 bullet"));
             current_player.AddBullet(1);
-            
             ChangePlayer();
         }
-        
+       
         ProcessGameState();
     }
     
-    private void ProcessPlayerWordInput()
+    private void ProcessWordInput()
     {
-        string playerWord = player.WordInput();
-        
-        if (CheckWordInput(playerWord))
+        SoundManager.Instance.Play("Spinning");
+        string input = player.WordInput();
+        if (CheckWordInput(input))
         {
             board.OpenString();
-            
-            if (IsFirstRound())
+            pendingCell.Action(current_player,target_player, board);
+            SoundManager.Instance.Play("Correct");
+            if (IsFirstRound)
             {
                 Narrator.Instance.Talk("Shit! Game Over!");
                 EndGame(true);
@@ -217,97 +290,126 @@ public class Game : MonoBehaviour
         }
         else
         {
+            SoundManager.Instance.Play("Wrong");
             current_player.AddBullet(2);
             ChangePlayer();
+            IsFirstRound = false;
         }
-        
+       
         ProcessGameState();
     }
-    
-    private void ProcessBotCharInput()
+
+    private void SpecialChoise()
     {
-        char botChar = bot.CharInput();
-        
-        if (CheckCharInput(botChar))
+        Time.timeScale = 0;
+        Choise.SetActive(true);
+    }
+
+    public void Accept()
+    {
+        Time.timeScale = 1;
+        Choise.SetActive(false);
+        StartCoroutine(ProcessSingleRoulette());
+    }
+    public void Decline()
+    {
+        Time.timeScale = 1;
+        Choise.SetActive(false);
+        IsSpecial = false;
+        EndGame(true);
+    }
+
+    private IEnumerator ProcessSingleRoulette()
+    {
+        yield return new WaitForSeconds(1f);
+        player.Round();
+        yield return new WaitForSeconds(1f);
+        if (player.ShootYourself())
         {
-            Narrator.Instance.Talk("Правильная буква");
-            board.OpenChar(botChar);
-            target_player.AddBullet(1);
-            
-            if (board.IsOpen())
-            {
-                status = GameStatus.Roulette;
-                ChangePlayer();
-            }
-            
+            yield return new WaitForSeconds(1f);
+            EndGame(false); 
         }
         else
         {
-            current_player.AddBullet(1);
-            Narrator.Instance.Talk("Неправильная буква");
-            ChangePlayer();
+            yield return new WaitForSeconds(1f);
+            EndGame(true);
         }
         
-        ProcessGameState();
     }
-    private void ProcessRouletteState()
+
+    private IEnumerator ProcessRouletteState()
     {
-        Narrator.Instance.Talk("Начинается русская рулетка");
-        Debug.Log($"state: ROULETTE, turn: {current_player}");
-        
-        
+       
+        yield return new WaitForSeconds(1f);
         current_player.Round();
-        Debug.Log($" {current_player} вращает барабан");
-        
-        
+        yield return new WaitForSeconds(1f);
         if (current_player.ShootYourself())
         {
-            Narrator.Instance.Talk($"💀 {current_player} killed!");
+            
+            StartCoroutine(Narrator.Instance.Talk($"💀 {current_player} killed!"));
+            yield return new WaitForSeconds(1f);
             EndGame(current_player is Bot); 
         }
         else
         {
-            Narrator.Instance.Talk("Empty...");
+            StartCoroutine(Narrator.Instance.Talk("Empty..."));
+            yield return new WaitForSeconds(1f);
+            
             ChangePlayer();
             ProcessGameState();
         }
+        yield return new WaitForSeconds(1f);
+        
     }
     
     private bool CheckCharInput(char input)
     {
-        if (!char.IsLetter(input)) return false;
-        
+        if (!char.IsLetter(input))
+        {
+            Narrator.Instance.Talk("Введите букву!");
+            return false;
+        }
+        bool letterExists = false;
+        bool letterAlreadyOpen = false;
         foreach (char c in answer)
         {
-            if (char.ToUpper(input) == char.ToUpper(c) && !board.IsCharOpen(c))
+            if (char.ToUpper(input) == char.ToUpper(c))
             {
-                return true;
-            }
-            else
-            {
-                Narrator.Instance.Talk("Эта буква уже есть!");
-                return false;
+                letterExists = true;
+                if (board.IsCharOpen(c))
+                {
+                    letterAlreadyOpen = true;
+                }
             }
         }
-        return false;
+    
+        if (!letterExists)
+        {
+            
+            return false;
+        }
+    
+        if (letterAlreadyOpen)
+        {
+            
+            return false;
+        }
+    
+        return true;
     }
     
     private bool CheckWordInput(string input)
     {
-        return !string.IsNullOrEmpty(input) && 
-               input.ToUpper().Equals(answer.ToUpper());
-    }
-    
-    private bool IsFirstRound()
-    {
-        for (int i = 0; i < answer.Length; i++)
+        if (!string.IsNullOrEmpty(input) &&
+            input.ToUpper().Equals(answer.ToUpper()))
         {
-            if (board.IsCharOpen(answer[i]))
-                return false;
+            return true;
         }
-        return true;
+        else
+        {
+            return false;
+        }
     }
-    
     private void ChangePlayer()
     {
         if (current_player == player)
@@ -328,14 +430,32 @@ public class Game : MonoBehaviour
     
     private void EndGame(bool playerWon)
     {
+        SoundManager.Instance.Stop("Spinning");
+        wheel.CanSpin = false;
         if (playerWon)
         {
-            int totalScore = player.score + 500;
-            Narrator.Instance.Talk($" You won {totalScore} score!");
+            int totalScore;
+            if (IsSpecial)
+            {
+                SoundManager.Instance.Play("Win");
+                totalScore= player.score;
+            }
+            else
+            {
+                SoundManager.Instance.Play("Win");
+                totalScore= 500;
+            }
+            WinMenu.SetActive(true);
+            win_scores.text = "You won - " + totalScore + " score";
+            
+            
         }
         else
         {
-            Narrator.Instance.Talk("Wasted!");
+            SoundManager.Instance.Play("Fail");
+           LoseMenu.SetActive(true);
         }
+        
+        Time.timeScale = 0;
     }
 }

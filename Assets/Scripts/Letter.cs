@@ -17,5 +17,12 @@ public class Letter : MonoBehaviour
         IsOpen = true;
     }
 
-   
+    public string GetLetter()
+    {
+        return letter.text;
+    }
+
+
+
+
 }
